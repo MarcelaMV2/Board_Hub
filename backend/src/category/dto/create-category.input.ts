@@ -13,9 +13,5 @@ export class CreateCategoryInput {
   @IsOptional()
   @Field(() => String)
   description: string;
-
-  @Field(() => String, {nullable: true})
-  @IsOptional()
-  image?: string;
   
 }

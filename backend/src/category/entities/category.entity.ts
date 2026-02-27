@@ -1,15 +1,16 @@
 import {
-  ObjectType,
   Field,
-  Int,
-  ID,
   GraphQLISODateTime,
+  ID,
+  ObjectType
 } from '@nestjs/graphql';
+import { Game } from 'src/game/entities/game.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -29,10 +30,6 @@ export class Category {
   @Field(() => String)
   description?: string;
 
-  @Column('varchar', { nullable: true })
-  @Field(() => String, { nullable: true})
-  image?: string;
-
   @CreateDateColumn({ name: 'create_date' })
   @Field(() => GraphQLISODateTime)
   createDate: Date;
@@ -44,4 +41,8 @@ export class Category {
   @DeleteDateColumn({ name: 'delete_date' })
   @Field(() => GraphQLISODateTime, { nullable: true })
   deleteDate: Date;
+
+  @OneToMany(() => Game, (game) => game.category)
+  @Field(() => [Game])
+  games: Game[];
 }
