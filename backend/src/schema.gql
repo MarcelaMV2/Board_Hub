@@ -39,11 +39,23 @@ type Category {
   games: [Game!]!
 }
 
+type Client {
+  id: String!
+  dni: Int!
+  fullName: String!
+  telefono: Int!
+  email: String!
+  perfil: String
+  password: String
+}
+
 type Query {
   categories: [Category!]!
   category(id: String!): Category!
   games: [Game!]!
   game(id: String!): Game!
+  clients: [Client!]!
+  client(id: String!): Client!
 }
 
 type Mutation {
@@ -53,6 +65,9 @@ type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(updateGameInput: UpdateGameInput!): Game!
   removeGame(id: String!): Game!
+  createClient(createClientInput: CreateClientInput!): Client!
+  updateClient(updateClientInput: UpdateClientInput!): Client!
+  removeClient(id: String!): Client!
 }
 
 input CreateCategoryInput {
@@ -89,4 +104,23 @@ input UpdateGameInput {
   priceDay: Int
   idCategory: String
   id: String!
+}
+
+input CreateClientInput {
+  dni: Int!
+  fullName: String!
+  telefono: Int!
+  email: String!
+  perfil: String
+  password: String
+}
+
+input UpdateClientInput {
+  dni: Int
+  fullName: String
+  telefono: Int
+  email: String
+  perfil: String
+  password: String
+  id: ID!
 }

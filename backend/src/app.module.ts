@@ -8,6 +8,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
 import { GameModule } from './game/game.module';
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GameModule } from './game/game.module';
     }),
     CategoryModule,
     GameModule,
+    ClientsModule,
   ],
   controllers: [],
   providers: [],
