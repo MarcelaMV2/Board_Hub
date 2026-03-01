@@ -1,5 +1,6 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ObjectType, Field, Int, GraphQLISODateTime } from '@nestjs/graphql';
+import { Loan } from 'src/loans/entities/loan.entity';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('clients')
 @ObjectType()
@@ -31,4 +32,20 @@ export class Client {
   @Column({ nullable: true })
   @Field(() => String, { nullable: true })
   password: string;
+
+  @CreateDateColumn({ name: 'create_date' })
+  @Field(() => GraphQLISODateTime)
+  createDate: Date;
+
+  @UpdateDateColumn({ name: 'update_date' })
+  @Field(() => GraphQLISODateTime)
+  updateDate: Date;
+
+  @DeleteDateColumn({ name: 'delete_date' })
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  deleteDate: Date;
+
+  @OneToMany(()=> Loan, (loans)=>loans.client )
+  @Field(()=> Loan)
+  loans: Loan[];
 }

@@ -12,12 +12,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { GameStatus } from '../enums/game_status.enum';
 import { Category } from 'src/category/entities/category.entity';
+import { Loan } from 'src/loans/entities/loan.entity';
 
 @Entity({ name: 'games' })
 @Unique(['title', 'category'])
@@ -31,7 +33,7 @@ export class Game {
   // @Field(() => String)
   // idCategory: string;
 
-  @Column({ unique: true})
+  @Column({ unique: true })
   @Field(() => String)
   title: string;
 
@@ -51,9 +53,9 @@ export class Game {
   @Field(() => Int)
   stockTotal: number;
 
-  @Column({ name: 'stock_available', nullable: true })
-  @Field(() => Int, { nullable: true })
-  stockAvailable?: number;
+  @Column({ name: 'stock_available'})
+  @Field(() => Int)
+  stockAvailable: number;
 
   @Column({
     type: 'enum',
@@ -87,4 +89,8 @@ export class Game {
   @JoinColumn({ name: 'id_category' })
   @Field(() => Category)
   category: Category;
+
+  @OneToMany(() => Loan, (loan) => loan.game)
+  @Field(() => Loan)
+  loans: Loan[];
 }

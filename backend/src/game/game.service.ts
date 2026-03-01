@@ -36,12 +36,15 @@ export class GameService {
     if (!category) throw new NotFoundException('No existe categoria');
     // const newGame = this.gameRepository.create(createGameInput);
     const newGame = this.gameRepository.create({ ...gameData, category });
+    newGame.stockAvailable = newGame.stockTotal;
 
     return await this.gameRepository.save(newGame);
   }
 
   async findAll(): Promise<Game[]> {
-    return await this.gameRepository.find();
+    return await this.gameRepository.find({
+      relations: ['category'],
+    });
   }
 
   async findOne(id: string): Promise<Game> {

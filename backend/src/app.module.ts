@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
 import { GameModule } from './game/game.module';
 import { ClientsModule } from './clients/clients.module';
+import { LoansModule } from './loans/loans.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ClientsModule } from './clients/clients.module';
     CategoryModule,
     GameModule,
     ClientsModule,
+    LoansModule,
   ],
   controllers: [],
   providers: [],

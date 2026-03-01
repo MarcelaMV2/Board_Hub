@@ -2,6 +2,47 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Client {
+  id: String!
+  dni: Int!
+  fullName: String!
+  telefono: Int!
+  email: String!
+  perfil: String
+  password: String
+  createDate: DateTime!
+  updateDate: DateTime!
+  deleteDate: DateTime
+  loans: Loan!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Loan {
+  id: ID!
+  startDate: DateTime!
+  endDate: DateTime!
+  priceTotal: Int!
+  devolutionDate: DateTime
+  quantity: Int!
+  status: LoanStatus!
+  note: String
+  createDate: DateTime!
+  updateDate: DateTime!
+  deleteDate: DateTime
+  game: Game!
+  client: Client!
+}
+
+enum LoanStatus {
+  ACTIVO
+  VENCIDO
+  DEVUELTO
+}
+
 type Game {
   id: ID!
   title: String!
@@ -9,7 +50,7 @@ type Game {
   minPlayers: Int!
   maxPlayers: Int!
   stockTotal: Int!
-  stockAvailable: Int
+  stockAvailable: Int!
   status: GameStatus!
   durationGame: Int!
   priceDay: Int!
@@ -17,17 +58,13 @@ type Game {
   updateDate: DateTime!
   deleteDate: DateTime
   category: Category!
+  loans: Loan!
 }
 
 enum GameStatus {
   DISPONIBLE
   AGOTADO
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Category {
   id: ID!
@@ -39,16 +76,6 @@ type Category {
   games: [Game!]!
 }
 
-type Client {
-  id: String!
-  dni: Int!
-  fullName: String!
-  telefono: Int!
-  email: String!
-  perfil: String
-  password: String
-}
-
 type Query {
   categories: [Category!]!
   category(id: String!): Category!
@@ -56,6 +83,8 @@ type Query {
   game(id: String!): Game!
   clients: [Client!]!
   client(id: String!): Client!
+  loans: [Loan!]!
+  loan(id: String!): Loan!
 }
 
 type Mutation {
@@ -68,6 +97,10 @@ type Mutation {
   createClient(createClientInput: CreateClientInput!): Client!
   updateClient(updateClientInput: UpdateClientInput!): Client!
   removeClient(id: String!): Client!
+  createLoan(createLoanInput: CreateLoanInput!): Loan!
+  updateLoan(updateLoanInput: UpdateLoanInput!): Loan!
+  removeLoan(id: String!): Loan!
+  changeStatus(id: ID!, status: LoanStatus!): Loan!
 }
 
 input CreateCategoryInput {
@@ -87,7 +120,6 @@ input CreateGameInput {
   minPlayers: Int
   maxPlayers: Int
   stockTotal: Int!
-  stockAvailable: Int
   durationGame: Int
   priceDay: Int!
   idCategory: String!
@@ -99,7 +131,6 @@ input UpdateGameInput {
   minPlayers: Int
   maxPlayers: Int
   stockTotal: Int
-  stockAvailable: Int
   durationGame: Int
   priceDay: Int
   idCategory: String
@@ -122,5 +153,24 @@ input UpdateClientInput {
   email: String
   perfil: String
   password: String
+  id: ID!
+}
+
+input CreateLoanInput {
+  idGame: String!
+  idClient: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  quantity: Int!
+  note: String
+}
+
+input UpdateLoanInput {
+  idGame: String
+  idClient: String
+  startDate: DateTime
+  endDate: DateTime
+  quantity: Int
+  note: String
   id: ID!
 }

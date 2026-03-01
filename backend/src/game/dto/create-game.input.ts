@@ -26,10 +26,6 @@ export class CreateGameInput {
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
-  stockAvailable?: number;
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
   durationGame: number;
 
   @Field(() => Int)
