@@ -64,7 +64,9 @@ export class LoansService {
   }
 
   async findAll(): Promise<Loan[]> {
-    return await this.loanRepository.find();
+    return await this.loanRepository.find({
+      relations: ['game', 'game.category', 'client']
+    });
   }
 
   async findOne(id: string): Promise<Loan> {
