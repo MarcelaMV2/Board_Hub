@@ -15,19 +15,24 @@ interface MenuOptions {
 export class SideMenuItems {
   menuOptions: MenuOptions[] = [
     {
-      icon: 'dices.png',
-      label: 'Juegos',
-      route: '/dashboard/juegos'
-    },
-    {
       icon: 'package.png',
       label: 'Prestamos',
-      route: '/dashboard/prestamos'
+      route: '/dashboard/loans'
+    },
+    {
+      icon: 'dices.png',
+      label: 'Juegos',
+      route: '/dashboard/games'
     },
     {
       icon: 'user.png',
       label: 'Clientes',
-      route: '/dashboard/clientes'
+      route: '/dashboard/clients'
+    },
+    {
+      icon: 'user.png',
+      label: 'Categorias',
+      route: '/dashboard/categories'
     }
   ]
 }

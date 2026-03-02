@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Layout } from "../../components/layout/layout";
+import { Layout } from '../../components/layout/layout';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -7,4 +7,4 @@ import { Layout } from "../../components/layout/layout";
   templateUrl: './dashboard-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class DashboardPage { }
+export default class DashboardPage {}
