@@ -1,1 +1,32 @@
-<p>categories works!</p>,
+<page-header
+  title="Gestión de categorias"
+  description="Gestiona las categorias de tus juegos"
+  buttonLabel="Nueva categoria"
+  (buttonClick)="openModalCategory()"
+/>
+<div>
+  <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+</div>
+
+<div class="w-full mt-4 rounded-lg border border-[#334155] bg-[#111827] overflow-hidden">
+  <table class="w-full text-sm text-[#F8FAFC]">
+    <thead>
+      <tr class="border-b border-[#334155] text-[#94A3B8] text-left">
+        <th class="px-4 py-3">Nombre</th>
+        <th class="px-4 py-3">Descripción</th>
+        <th class="px-4 py-3">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (cat of categories; track $index) {
+        <tr class="border-b border-[#334155] hover:bg-[#1E293B] transition">
+          <td class="px-4 py-4">{{ cat.name }}</td>
+          <td class="px-4 py-4 text-[#94A3B8]">{{ cat.description }}</td>
+          <td class="px-4 py-4">
+            <app-dropdown-menu (onEdit)="editCategory(cat.name)" (onDelete)="deleteCategory(cat.name)" />
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

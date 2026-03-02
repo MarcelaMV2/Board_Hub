@@ -1,1 +1,10 @@
-<p>loans works!</p>,
+<page-header
+  title="Gestión de prestamos"
+  description="Gestiona los préstamos de tus juegos de mesa"
+  buttonLabel="Nuevo prestamo"
+  (buttonClick)="openModalLoan()"
+/>
+
+<div>
+  <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+</div>

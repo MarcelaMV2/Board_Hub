@@ -1,1 +1,10 @@
-<p>clients works!</p>,
+<page-header
+  title="Gestión de clientes"
+  description="Gestiona los clientes"
+  buttonLabel="Nuevo cliente"
+  (buttonClick)="openModalClient()"
+/>
+
+<div>
+  <search-input placeholder="Buscar por DNI, celular..." (searchChange)="onSearch($event)" />
+</div>

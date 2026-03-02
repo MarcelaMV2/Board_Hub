@@ -1,0 +1,28 @@
+<div class="relative">
+  <button
+    (click)="toggle()"
+    class="text-[#94A3B8] hover:text-white p-1 rounded transition">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="5" r="1.5"/>
+      <circle cx="12" cy="12" r="1.5"/>
+      <circle cx="12" cy="19" r="1.5"/>
+    </svg>
+  </button>
+
+  @if (isOpen) {
+    <div class="fixed inset-0 z-10" (click)="close()"></div>
+
+    <div class="absolute right-0 z-20 mt-1 w-36 bg-[#1E293B] border border-[#334155] rounded-lg shadow-lg overflow-hidden">
+      <button
+        (click)="onEdit.emit(); close()"
+        class="w-full text-left px-4 py-2 text-sm text-[#F8FAFC] hover:bg-[#334155] transition">
+        ✏️ Editar
+      </button>
+      <button
+        (click)="onDelete.emit(); close()"
+        class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[#334155] transition">
+        🗑️ Eliminar
+      </button>
+    </div>
+  }
+</div>

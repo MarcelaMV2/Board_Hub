@@ -1,0 +1,10 @@
+<div class="flex flex-row justify-between items-start mb-6">
+  <div>
+    <h1 class="text-[#F8FAFC] text-2xl font-semibold">{{ title }}</h1>
+    <p class="text-[#94A3B8] text-sm">{{ description }}</p>
+  </div>
+  <!-- <button class="flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+    <span>+</span> {{ buttonLabel }}
+  </button> -->
+  <btn-primary [label]="buttonLabel" (clicked)="buttonClick.emit()" />
+</div>
