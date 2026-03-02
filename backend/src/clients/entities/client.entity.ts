@@ -46,6 +46,6 @@ export class Client {
   deleteDate: Date;
 
   @OneToMany(()=> Loan, (loans)=>loans.client )
-  @Field(()=> Loan)
+  @Field(()=> [Loan])
   loans: Loan[];
 }

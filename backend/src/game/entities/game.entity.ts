@@ -91,6 +91,6 @@ export class Game {
   category: Category;
 
   @OneToMany(() => Loan, (loan) => loan.game)
-  @Field(() => Loan)
+  @Field(() => [Loan])
   loans: Loan[];
 }

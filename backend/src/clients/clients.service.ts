@@ -40,7 +40,9 @@ export class ClientsService {
   }
 
   async findAll(): Promise<Client[]> {
-    return await this.clientRepository.find();
+    return await this.clientRepository.find({
+      relations: ['loans']
+    });
   }
 
   async findOne(id: string): Promise<Client> {

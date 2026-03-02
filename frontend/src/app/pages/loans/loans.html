@@ -5,6 +5,70 @@
   (buttonClick)="openModalLoan()"
 />
 
-<div>
+<div class="flex flex-row justify-between items-center mb-4">
+  <btn-secondary [tabs]="tabs" [selected]="selectedTab" (tabChange)="filterByTab($event)" />
   <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+</div>
+
+<div class="w-full rounded-lg border border-[#334155] bg-[#111827]">
+  <table class="w-full text-sm text-[#F8FAFC]">
+    <thead class=" bg-[#1B273B]">
+      <tr class="border-b border-[#334155] text-[#94A3B8] text-left">
+        <th class="px-4 py-3 w-10">N</th>
+        <th class="px-4 py-3">Juego</th>
+        <th class="px-4 py-3">Cliente</th>
+        <th class="px-4 py-3">Fecha de préstamo</th>
+        <th class="px-4 py-3">Estado</th>
+        <th class="px-4 py-3">Precio Total</th>
+        <th class="px-4 py-3">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (loan of filteredLoans; track loan.id) {
+        <tr class="border-b border-[#334155] hover:bg-[#1E293B] bg-[#1b273b] transition">
+          <td class="px-4 py-4 text-[#94A3B8]">{{ $index + 1 }}</td>
+
+          <td class="px-4 py-4">
+            <p class="font-medium">{{ loan.game.title }}</p>
+            <p class="text-[#94A3B8] text-xs">{{ loan.game.category.name }}</p>
+          </td>
+
+          <td class="px-4 py-4">
+            <div class="flex items-center gap-3">
+              @if (loan.client.perfil) {
+                <img [src]="loan.client.perfil" class="w-8 h-8 rounded-full object-cover" />
+              } @else {
+                <div
+                  class="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-xs font-bold"
+                >
+                  {{ getInitials(loan.client.fullName) }}
+                </div>
+              }
+              <div>
+                <p class="font-medium">{{ loan.client.fullName }}</p>
+                <p class="text-[#94A3B8] text-xs">{{ loan.client.telefono }}</p>
+              </div>
+            </div>
+          </td>
+
+          <td class="px-4 py-4 text-[#94A3B8]">
+            {{ formatDate(loan.startDate) }} - {{ formatDate(loan.endDate) }}
+          </td>
+
+          <td class="px-4 py-4">
+            <app-status-chip
+              [label]="getChipLabel(loan.status)"
+              [type]="getChipType(loan.status)"
+            />
+          </td>
+
+          <td class="px-4 py-4 text-[#94A3B8]">Bs. {{ loan.priceTotal }}</td>
+
+          <td class="px-4 py-4">
+            <app-dropdown-menu (onEdit)="editLoan(loan)" (onDelete)="deleteLoan(loan.id)" />
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

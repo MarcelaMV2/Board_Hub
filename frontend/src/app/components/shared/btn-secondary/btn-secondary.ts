@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   selector: 'btn-secondary',
   imports: [],
   templateUrl: './btn-secondary.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BtnSecondary {
   @Input() tabs: string[] = [];

@@ -13,7 +13,7 @@ type Client {
   createDate: DateTime!
   updateDate: DateTime!
   deleteDate: DateTime
-  loans: Loan!
+  loans: [Loan!]!
 }
 
 """
@@ -58,7 +58,7 @@ type Game {
   updateDate: DateTime!
   deleteDate: DateTime
   category: Category!
-  loans: Loan!
+  loans: [Loan!]!
 }
 
 enum GameStatus {

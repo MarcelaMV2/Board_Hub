@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 
 interface MenuOptions {
   icon: string;
@@ -8,7 +8,7 @@ interface MenuOptions {
 }
 @Component({
   selector: 'side-menu-items',
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './side-menu-items.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
