@@ -72,3 +72,15 @@
     </tbody>
   </table>
 </div>
+<app-modal [isOpen]="isCreateLoanOpen" (close)="isCreateLoanOpen = false">
+  <div>
+    <modal-layout
+      title="Registrar nuevo Prestamo"
+      description="Añade un nuevo prestamo al sistema"
+      buttonLabel="Registrar prestamo"
+    >
+      <div><H3></H3></div>
+    </modal-layout>
+  </div>
+</app-modal>
+

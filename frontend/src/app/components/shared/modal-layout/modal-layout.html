@@ -1,0 +1,21 @@
+<div class="flex flex-col gap-4">
+  <div class="text-center mb-6">
+    <h2 class="text-xl font-semibold text-white">{{ title }}</h2>
+    <p class="text-sm text-gray-400 mt-1">{{ description }}</p>
+    <div class="border-t border-gray-700 mt-4"></div>
+  </div>
+
+  <div>
+    <ng-content></ng-content>
+  </div>
+
+  <!-- <div class="flex justify-center gap-4 mt-6">
+    <button
+      class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
+      (click)="cancel.emit()"
+    >
+      Cancelar
+    </button>
+    <btn-primary [label]="buttonLabel" (clicked)="buttonClick.emit()" />
+  </div> -->
+</div>

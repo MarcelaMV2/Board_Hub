@@ -1,0 +1,10 @@
+@if (isOpen) {
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-[#1E293B] rounded-2xl w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+      <button (click)="close.emit()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
+        ✕
+      </button>
+      <ng-content></ng-content>
+    </div>
+  </div>
+}
