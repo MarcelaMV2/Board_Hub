@@ -73,6 +73,10 @@ export class Game {
   @Field(() => Int)
   priceDay: number;
 
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  image?: string;
+
   @CreateDateColumn({ name: 'create_date' })
   @Field(() => GraphQLISODateTime)
   createDate: Date;

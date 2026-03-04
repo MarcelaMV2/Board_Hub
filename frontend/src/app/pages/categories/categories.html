@@ -19,7 +19,7 @@
     </thead>
     <tbody>
       @for (cat of categories; track $index) {
-        <tr class="border-b border-[#334155] hover:bg-[#1E293B] bg-[#1b273b]  transition">
+        <tr class="border-b border-[#334155] hover:bg-[#1E293B] bg-[#1b273b] transition">
           <td class="px-4 py-4">{{ cat.name }}</td>
           <td class="px-4 py-4 text-[#94A3B8]">{{ cat.description }}</td>
           <td class="px-4 py-4">
@@ -33,3 +33,25 @@
     </tbody>
   </table>
 </div>
+<!-- <div class="mt-10">
+  <data-table
+    [displayedColumns]="categoryColumns"
+    [data]="categories"
+    (edit)="editCategory($event)"
+    (delete)="deleteCategory($event)"
+  ></data-table>
+</div> -->
+<app-modal [isOpen]="isCreateCategoryOpen" (close)="isCreateCategoryOpen = false">
+  <div>
+    <modal-layout
+      title="Registrar nueva categoria"
+      description="Añade una nueva categoria al sistema"
+      buttonLabel="Registrar categoria"
+    >
+      <app-category-form
+        (submitForm)="createCategory($event)"
+        (cancel)="isCreateCategoryOpen = false"
+      ></app-category-form>
+    </modal-layout>
+  </div>
+</app-modal>

@@ -54,6 +54,7 @@ type Game {
   status: GameStatus!
   durationGame: Int!
   priceDay: Int!
+  image: String
   createDate: DateTime!
   updateDate: DateTime!
   deleteDate: DateTime
@@ -122,6 +123,7 @@ input CreateGameInput {
   stockTotal: Int!
   durationGame: Int
   priceDay: Int!
+  image: String
   idCategory: String!
 }
 
@@ -133,6 +135,7 @@ input UpdateGameInput {
   stockTotal: Int
   durationGame: Int
   priceDay: Int
+  image: String
   idCategory: String
   id: String!
 }

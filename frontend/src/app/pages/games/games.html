@@ -14,12 +14,12 @@
   <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
 </div>
 
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-4 gap-4">
   @for (game of filteredGames; track game.id) {
     <div class="bg-[#1E293B] rounded-xl overflow-hidden border border-[#334155]">
       <!-- imagen placeholder -->
-      <div class="relative h-44 bg-[#0F172A] flex items-center justify-center">
-        <img src="logo.jpg  " alt="" class="text-[#334155] text-4xl" />
+      <div class="relative h-48 bg-[#0F172A] flex items-center justify-center">
+        <img src="{{ game.image}}" alt="" class="text-[#334155] text-4xlclass w-full h-full object-cover" />
         <div class="justify-between">
           <span
             class="absolute top-2 left-2 text-xs bg-[#1E293B] text-[#94A3B8] px-2 py-1 rounded-full"
@@ -63,3 +63,16 @@
     </div>
   }
 </div>
+
+<app-modal [isOpen]="isCreateGameOpen" (close)="isCreateGameOpen = false">
+  <modal-layout
+    title="Registrar Juegos"
+    description="Añade un nuevo juego al sistema"
+    buttonLabel="Crear Juego"
+  >
+    <app-game-form
+      (submitForm)="createGame($event)"
+      (cancel)="isCreateGameOpen = false"
+    ></app-game-form>
+  </modal-layout>
+</app-modal>

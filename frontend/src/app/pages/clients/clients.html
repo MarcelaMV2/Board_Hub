@@ -12,7 +12,7 @@
 <div class="w-full rounded-lg border border-[#334155] bg-[#111827] mt-4">
   <table class="w-full text-sm text-[#F8FAFC]">
     <thead>
-      <tr class="border-b border-[#334155] text-[#94A3B8] bg-[#1b273b]  text-left">
+      <tr class="border-b border-[#334155] text-[#94A3B8] bg-[#1b273b] text-left">
         <th class="px-4 py-3 w-10">N</th>
         <th class="px-4 py-3">Cliente</th>
         <th class="px-4 py-3">Celular</th>
@@ -54,10 +54,38 @@
           </td>
           <td class="px-4 py-4 text-[#94A3B8]">{{ getTotalLoans(client.loans) }}</td>
           <td class="px-4 py-4">
-            <app-dropdown-menu (onEdit)="editClient(client)" (onDelete)="deleteClient(client.id)" />
+            <app-dropdown-menu
+              (onCreate)="createClient(client)"
+              (onEdit)="editClient(client)"
+              (onDelete)="deleteClient(client.id)"
+            />
           </td>
         </tr>
       }
     </tbody>
   </table>
 </div>
+
+<!-- <div class="mt-10">
+  <data-table
+    [displayedColumns]="clientsColumns"
+    [data]="clients"
+    (edit)="editClient($event)"
+    (delete)="deleteClient($event)"
+  ></data-table>
+</div> -->
+
+<app-modal [isOpen]="isCreateClientOpen" (close)="isCreateClientOpen = false">
+  <div>
+    <modal-layout
+      title="Registrar nuevo Cliente"
+      description="Añade un nuevo cliente al sistema"
+      buttonLabel="Crear cliente"
+    >
+      <app-client-form
+        (submitForm)="createClient($event)"
+        (cancel)="isCreateClientOpen = false"
+      ></app-client-form>
+    </modal-layout>
+  </div>
+</app-modal>

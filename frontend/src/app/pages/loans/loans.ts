@@ -5,10 +5,12 @@ import { LoanService } from '../../services/loan/loan';
 import { BtnSecondary } from '../../components/shared/btn-secondary/btn-secondary';
 import { StatusChip } from '../../components/shared/status-chip/status-chip';
 import { DropdownMenu } from '../../components/shared/dropdown-menu/dropdown-menu';
+import { Modal } from "../../components/shared/modal/modal";
+import { ModalLayout } from "../../components/shared/modal-layout/modal-layout";
 
 @Component({
   selector: 'app-loans',
-  imports: [PageHeader, SearchInput, BtnSecondary, StatusChip, DropdownMenu],
+  imports: [PageHeader, SearchInput, BtnSecondary, StatusChip, DropdownMenu, Modal, ModalLayout],
   templateUrl: './loans.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -23,6 +25,11 @@ export class Loans {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  isCreateLoanOpen = false;
+
+  openModalLoan() {
+    this.isCreateLoanOpen = true;
+  }
   ngOnInit() {
     this.loanService.getLoans().subscribe({
       next: (data) => {
@@ -87,7 +94,6 @@ export class Loans {
     });
   }
 
-  openModalLoan() {}
   onSearch(term: string) {}
   editLoan(loan: any) {}
   deleteLoan(id: string) {}

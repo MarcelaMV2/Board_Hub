@@ -1,0 +1,36 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+  <div>
+    <label class="text-sm text-gray-300">Nombre</label>
+    <input
+      type="text"
+      formControlName="name"
+      placeholder="Nombre de la categoría"
+      class="w-full p-2 rounded-lg bg-[#111827] border border-gray-700 text-white"
+    />
+  </div>
+
+  <div>
+    <label class="text-sm text-gray-300">Descripción</label>
+    <textarea
+      formControlName="description"
+      placeholder="Descripción (opcional)"
+      class="w-full p-2 rounded-lg bg-[#111827] border border-gray-700 text-white"
+    ></textarea>
+  </div>
+
+  <div class="flex justify-end gap-4 mt-4">
+    <button
+      type="button"
+      class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
+      (click)="cancel.emit()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+    >
+      Registrar
+    </button>
+  </div>
+</form>

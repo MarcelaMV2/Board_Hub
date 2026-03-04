@@ -12,7 +12,7 @@ export class DropdownMenu {
 
   isOpen = false;
 
-  toggle(){
+  toggle() {
     this.isOpen = !this.isOpen;
   }
 

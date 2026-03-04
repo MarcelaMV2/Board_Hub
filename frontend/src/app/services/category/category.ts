@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 const categories = gql`
   query {
     categories {
+      id
       name
       description
     }
