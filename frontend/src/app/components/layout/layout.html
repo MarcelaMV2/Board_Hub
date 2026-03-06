@@ -1,9 +1,17 @@
-<div class="flex flex-row w-full h-screen">
-  <app-sidebar />
+<div class="flex flex-row w-full h-screen relative">
+  @if (sidebarOpen() && isSmallScreen()) {
+    <div class="fixed inset-0 bg-black/50 z-20 lg:hidden" (click)="toggleSidebar()"></div>
+  }
 
-  <div class="flex flex-col flex-1 bg-[#0F172A]">
-    <app-topbar />
-    <main class="flex-1 overflow-auto bg-[#0F172A] p-6">
+  @if (sidebarOpen()) {
+    <div class="fixed lg:relative z-30 lg:z-auto h-full">
+      <app-sidebar (closeSidebar)="toggleSidebar()" />
+    </div>
+  }
+
+  <div class="flex flex-col flex-1 bg-[#0F172A] min-w-0">
+    <app-topbar (toggleSidebar)="toggleSidebar()" />
+    <main class="flex-1 overflow-auto bg-[#0F172A] p-4 lg:p-6">
       <router-outlet></router-outlet>
     </main>
   </div>

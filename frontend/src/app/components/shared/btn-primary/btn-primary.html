@@ -2,5 +2,8 @@
   (click)="clicked.emit()"
   class="flex items-center gap-2 bg-[#2563EB] hover:bg-[red] text-white text-sm font-medium px-4 py-2 rounded-lg transition"
 >
-  <span *ngIf="icon"><img [src]="icon" alt="" class="h-4 w-4 to-white" /></span> {{ label }}
+  @if (icon) {
+    <lucide-icon [img]="icon" [size]="16"></lucide-icon>
+  }
+  {{ label }}
 </button>

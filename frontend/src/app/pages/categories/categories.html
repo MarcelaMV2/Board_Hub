@@ -4,44 +4,21 @@
   buttonLabel="Nueva categoria"
   (buttonClick)="openModalCategory()"
 />
+
 <div class="flex justify-end mb-4">
   <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
 </div>
 
-<div class="w-full mt-4 rounded-lg border border-[#334155] overflow-hidden">
-  <table class="w-full text-sm text-[#F8FAFC]">
-    <thead>
-      <tr class="border-b border-[#334155] text-[#94A3B8] bg-[#1b273b] text-left">
-        <th class="px-4 py-3">Nombre</th>
-        <th class="px-4 py-3">Descripción</th>
-        <th class="px-4 py-3">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (cat of categories; track $index) {
-        <tr class="border-b border-[#334155] hover:bg-[#1E293B] bg-[#1b273b] transition">
-          <td class="px-4 py-4">{{ cat.name }}</td>
-          <td class="px-4 py-4 text-[#94A3B8]">{{ cat.description }}</td>
-          <td class="px-4 py-4">
-            <app-dropdown-menu
-              (onEdit)="editCategory(cat.name)"
-              (onDelete)="deleteCategory(cat.name)"
-            />
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
-</div>
-<!-- <div class="mt-10">
+<div class="w-full overflow-x-auto rounded-lg">
   <data-table
-    [displayedColumns]="categoryColumns"
-    [data]="categories"
-    (edit)="editCategory($event)"
-    (delete)="deleteCategory($event)"
-  ></data-table>
-</div> -->
-<app-modal [isOpen]="isCreateCategoryOpen" (close)="isCreateCategoryOpen = false">
+    [columnDefs]="categoryColumns"
+    [data]="filteredCategories()"
+    (edit)="openEditModal($event)"
+    (delete)="deleteCategory($event)">
+  </data-table>
+</div>
+
+<app-modal [isOpen]="isModalOpen()" (close)="isModalOpen.set(false)">
   <div>
     <modal-layout
       title="Registrar nueva categoria"
@@ -49,8 +26,9 @@
       buttonLabel="Registrar categoria"
     >
       <app-category-form
-        (submitForm)="createCategory($event)"
-        (cancel)="isCreateCategoryOpen = false"
+        [category]="selectedCategory()"
+        (submitForm)="saveCategory($event)"
+        (cancel)="closeModal()"
       ></app-category-form>
     </modal-layout>
   </div>

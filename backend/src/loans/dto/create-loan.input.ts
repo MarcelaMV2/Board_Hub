@@ -1,13 +1,31 @@
+// loans/dto/create-loan.input.ts
 import { InputType, Int, Field, GraphQLISODateTime } from '@nestjs/graphql';
-import { IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
-import { LoanStatus } from '../enums/loan-status.enum';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
 @InputType()
-export class CreateLoanInput {
+export class LoanItemInput {
   @IsUUID()
   @Field(() => String)
   idGame: string;
 
+  @IsInt()
+  @Min(1)
+  @Field(() => Int)
+  quantity: number;
+}
+
+@InputType()
+export class CreateLoanInput {
   @IsUUID()
   @Field(() => String)
   idClient: string;
@@ -18,13 +36,15 @@ export class CreateLoanInput {
   @Field(() => GraphQLISODateTime)
   endDate: Date;
 
-  @IsNumber()
-  @Min(1)
-  @Field(() => Int)
-  quantity: number;
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => LoanItemInput)
+  @Field(() => [LoanItemInput])
+  items: LoanItemInput[];
 
   @IsString()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  note: string;
+  note?: string;
 }

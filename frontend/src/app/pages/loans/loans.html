@@ -10,77 +10,200 @@
   <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
 </div>
 
-<div class="w-full rounded-lg border border-[#334155] bg-[#111827]">
-  <table class="w-full text-sm text-[#F8FAFC]">
-    <thead class=" bg-[#1B273B]">
-      <tr class="border-b border-[#334155] text-[#94A3B8] text-left">
-        <th class="px-4 py-3 w-10">N</th>
-        <th class="px-4 py-3">Juego</th>
-        <th class="px-4 py-3">Cliente</th>
-        <th class="px-4 py-3">Fecha de préstamo</th>
-        <th class="px-4 py-3">Estado</th>
-        <th class="px-4 py-3">Precio Total</th>
-        <th class="px-4 py-3">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (loan of filteredLoans; track loan.id) {
-        <tr class="border-b border-[#334155] hover:bg-[#1E293B] bg-[#1b273b] transition">
-          <td class="px-4 py-4 text-[#94A3B8]">{{ $index + 1 }}</td>
-
-          <td class="px-4 py-4">
-            <p class="font-medium">{{ loan.game.title }}</p>
-            <p class="text-[#94A3B8] text-xs">{{ loan.game.category.name }}</p>
-          </td>
-
-          <td class="px-4 py-4">
-            <div class="flex items-center gap-3">
-              @if (loan.client.perfil) {
-                <img [src]="loan.client.perfil" class="w-8 h-8 rounded-full object-cover" />
-              } @else {
-                <div
-                  class="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-xs font-bold"
-                >
-                  {{ getInitials(loan.client.fullName) }}
-                </div>
-              }
-              <div>
-                <p class="font-medium">{{ loan.client.fullName }}</p>
-                <p class="text-[#94A3B8] text-xs">{{ loan.client.telefono }}</p>
-              </div>
-            </div>
-          </td>
-
-          <td class="px-4 py-4 text-[#94A3B8]">
-            {{ formatDate(loan.startDate) }} - {{ formatDate(loan.endDate) }}
-          </td>
-
-          <td class="px-4 py-4">
-            <app-status-chip
-              [label]="getChipLabel(loan.status)"
-              [type]="getChipType(loan.status)"
-            />
-          </td>
-
-          <td class="px-4 py-4 text-[#94A3B8]">Bs. {{ loan.priceTotal }}</td>
-
-          <td class="px-4 py-4">
-            <app-dropdown-menu (onEdit)="editLoan(loan)" (onDelete)="deleteLoan(loan.id)" />
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
+<div class="w-full overflow-x-auto rounded-lg">
+  <data-table
+    [columnDefs]="loanColumns"
+    [data]="filteredLoans"
+    [showView]="true"
+    (view)="openDetailModal($event)"
+    (edit)="editLoan($event)"
+    (delete)="deleteLoan($event)"
+    (statusChange)="onStatusChange($event)"
+  >
+  </data-table>
 </div>
+
 <app-modal [isOpen]="isCreateLoanOpen" (close)="isCreateLoanOpen = false">
-  <div>
-    <modal-layout
-      title="Registrar nuevo Prestamo"
-      description="Añade un nuevo prestamo al sistema"
-      buttonLabel="Registrar prestamo"
-    >
-      <div><H3></H3></div>
-    </modal-layout>
-  </div>
+  <modal-layout
+    title="Registrar nuevo Préstamo"
+    description="Añade un nuevo préstamo al sistema"
+    buttonLabel="Registrar préstamo"
+    (buttonClick)="submitLoan()"
+  >
+    <app-loan-form [loanToEdit]="loanToEdit" (cancel)="closeModal()" (saved)="onLoanSaved()" />
+  </modal-layout>
 </app-modal>
 
+
+<app-modal [isOpen]="isDetailModalOpen" (close)="closeDetailModal()">
+  @if (loanToView) {
+    <div class="flex flex-col gap-5 min-w-120">
+      <!-- Header: cliente -->
+      <div class="flex items-center gap-4 pb-4 border-b border-[#334155]">
+        @if (loanToView.avatar) {
+          <img [src]="loanToView.avatar" class="w-12 h-12 rounded-full object-cover" />
+        } @else {
+          <div
+            class="w-12 h-12 rounded-full bg-[#1d4ed8] flex items-center justify-center text-sm font-bold text-white"
+          >
+            {{ loanToView.initials }}
+          </div>
+        }
+
+        <div>
+          <p class="text-white font-semibold text-base">{{ loanToView.nombre }}</p>
+          <p class="text-[#64748b] text-sm">DNI: {{ loanToView.dni }}</p>
+        </div>
+        <div class="ml-auto">
+          <app-status-chip
+            [label]="
+              loanToView.estado === 'ACTIVO'
+                ? 'Activo'
+                : loanToView.estado === 'DEVUELTO'
+                  ? 'Devuelto'
+                  : 'Vencido'
+            "
+            [type]="
+              loanToView.estado === 'ACTIVO'
+                ? 'active'
+                : loanToView.estado === 'DEVUELTO'
+                  ? 'devuelto'
+                  : 'vencido'
+            "
+          >
+          </app-status-chip>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2">
+          <p class="text-xs text-[#64748b] mb-1">Fecha inicio</p>
+          <p class="text-sm text-white font-medium">
+            {{ formatDate(loanToView._raw.startDate) }}
+          </p>
+        </div>
+        <div class="bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2">
+          <p class="text-xs text-[#64748b] mb-1">Fecha fin</p>
+          <p class="text-sm text-white font-medium">
+            {{ formatDate(loanToView._raw.endDate) }}
+          </p>
+        </div>
+        <div class="bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2">
+          <p class="text-xs text-[#64748b] mb-1">Total</p>
+          <p class="text-sm font-bold text-[#4ade80]">{{ loanToView.total }}</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
+          {{ loanToView._raw.items.length }} juego{{
+            loanToView._raw.items.length !== 1 ? 's' : ''
+          }}
+        </p>
+        <div class="flex flex-col gap-2">
+          @for (item of loanToView._raw.items; track item.id) {
+            <div
+              class="flex items-center gap-3 bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2"
+            >
+              @if (item.game.image) {
+                <img [src]="item.game.image" class="w-9 h-9 rounded object-cover" />
+              } @else {
+                <div class="w-9 h-9 rounded bg-[#1e293b] flex items-center justify-center text-xl">
+                  🎲
+                </div>
+              }
+              <div class="flex-1">
+                <p class="text-sm text-white font-medium">{{ item.game.title }}</p>
+                <p class="text-xs text-[#64748b]">{{ item.game.category.name }}</p>
+              </div>
+              <p class="text-xs text-[#94A3B8]">
+                Bs. {{ item.priceSnapshot }}/día × {{ item.quantity }} unid.
+              </p>
+              <p class="text-sm font-semibold text-[#4ade80]">Bs. {{ item.subtotal }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (loanToView._raw.note) {
+        <div class="bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2">
+          <p class="text-xs text-[#64748b] mb-1">Notas</p>
+          <p class="text-sm text-white">{{ loanToView._raw.note }}</p>
+        </div>
+      }
+
+      <button
+        (click)="closeDetailModal()"
+        class="w-full py-2 rounded-lg border border-[#334155] text-[#94A3B8] hover:bg-[#334155] transition text-sm"
+      >
+        Cerrar
+      </button>
+    </div>
+  }
+</app-modal>
+
+<app-modal [isOpen]="isEditLoanOpen" (close)="closeEditModal()">
+  <modal-layout
+    title="Editar Préstamo"
+    description="Modifica los datos del préstamo"
+    buttonLabel="Guardar cambios"
+  >
+    <app-loan-form [loanToEdit]="loanToEdit" (cancel)="closeEditModal()" (saved)="onLoanUpdated()">
+    </app-loan-form>
+  </modal-layout>
+</app-modal>
+
+<app-modal [isOpen]="isDeleteConfirmOpen" (close)="closeDeleteConfirm()">
+  <div class="flex flex-col items-center gap-4 py-2">
+    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-[#7f1d1d]">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#f87171"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+        />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    </div>
+    <div class="text-center">
+      <h3 class="text-white font-semibold text-base mb-1">Eliminar préstamo</h3>
+      <p class="text-[#94A3B8] text-sm">¿Estás seguro? Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="flex gap-3 w-full mt-2">
+      <button
+        (click)="closeDeleteConfirm()"
+        class="flex-1 py-2 rounded-lg border border-[#334155] text-[#94A3B8] hover:bg-[#334155] transition text-sm"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="confirmDelete()"
+        [disabled]="isDeleting"
+        class="flex-1 py-2 rounded-lg bg-[#dc2626] text-white font-medium hover:bg-[#b91c1c] transition text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+      >
+        @if (isDeleting) {
+          <svg
+            class="animate-spin"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        }
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</app-modal>

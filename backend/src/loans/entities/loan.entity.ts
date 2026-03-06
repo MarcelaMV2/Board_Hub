@@ -12,12 +12,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { LoanStatus } from '../enums/loan-status.enum';
 import { Game } from 'src/game/entities/game.entity';
 import { Client } from 'src/clients/entities/client.entity';
+import { LoanItem } from 'src/loans/entities/loan-item.entity';
 
 @Entity({ name: 'loans' })
 @ObjectType()
@@ -41,10 +43,6 @@ export class Loan {
   @Column({ nullable: true })
   @Field(() => GraphQLISODateTime, { nullable: true })
   devolutionDate?: Date;
-
-  @Column({ default: 1 })
-  @Field(() => Int)
-  quantity: number;
 
   @Column({
     type: 'enum',
@@ -70,13 +68,16 @@ export class Loan {
   @Field(() => GraphQLISODateTime, { nullable: true })
   deleteDate: Date;
 
-  @ManyToOne(() => Game, (game) => game.loans)
-  @JoinColumn({name: 'id_game'})
-  @Field(() => Game)
-  game: Game;
+  @OneToMany(() => LoanItem, (item) => item.loan, { cascade: true })
+  @Field(() => [LoanItem])
+  items: LoanItem[];
+
 
   @ManyToOne(()=> Client, (client) => client.loans)
   @JoinColumn({name: 'id_client'})
   @Field(()=> Client)
   client: Client;
+
+
+  
 }

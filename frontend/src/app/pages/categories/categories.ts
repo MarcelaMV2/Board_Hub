@@ -1,101 +1,124 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { PageHeader } from '../../components/shared/page-header/page-header';
-import { SearchInput } from '../../components/shared/search-input/search-input';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category/category';
 import { DropdownMenu } from '../../components/shared/dropdown-menu/dropdown-menu';
 import { Modal } from '../../components/shared/modal/modal';
 import { ModalLayout } from '../../components/shared/modal-layout/modal-layout';
 import { CategoryForm } from './category-form/category-form';
-import { DataTable } from '../../components/shared/data-table/data-table';
+import { PageHeader } from '../../components/shared/page-header/page-header';
+import { SearchInput } from '../../components/shared/search-input/search-input';
+import { ColumnDef, DataTable } from '../../components/shared/data-table/data-table';
 
 @Component({
   selector: 'app-categories',
-  imports: [PageHeader, Modal, ModalLayout, CategoryForm, SearchInput, DropdownMenu],
+  standalone: true,
+  imports: [Modal, ModalLayout, CategoryForm, PageHeader, SearchInput, DataTable],
   templateUrl: './categories.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Categories implements OnInit {
-  categories: { name: string; description: string }[] = [];
-  categoryColumns = ['index', 'name', 'description', 'actions'];
+export class Categories {
+  categories = signal<Category[]>([]);
+  searchTerm = signal('');
+  isModalOpen = signal(false);
+  selectedCategory = signal<Category | null>(null);
+  isLoading = signal(false);
 
-  constructor(
-    private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  categoryColumns: ColumnDef[] = [
+    { key: 'index', label: 'N', type: 'index' },
+    { key: 'name', label: 'Nombre', type: 'text' },
+    { key: 'description', label: 'Descripción', type: 'text' },
+    { key: 'actions', label: 'Acciones', type: 'actions' },
+  ];
 
-  isCreateCategoryOpen = false;
-  openModalCategory() {
-    this.isCreateCategoryOpen = true;
-  }
+  filteredCategories = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    console.log('FILTER EXECUTADO', term);
+    if (!term) return this.categories();
+
+    return this.categories().filter((categoria) => categoria.name.toLowerCase().includes(term));
+  });
+
+  constructor(private categoryService: CategoryService) {}
 
   ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.isLoading.set(true);
+
     this.categoryService.getCategories().subscribe({
       next: (data) => {
-        console.log('DATA:', data);
-        this.categories = data;
-        this.cdr.markForCheck();
+        this.categories.set(data);
+        this.isLoading.set(false);
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        console.error('Error cargando categorías', err);
+        this.isLoading.set(false);
+      },
     });
+  }
+
+  openModalCategory() {
+    this.selectedCategory.set(null); // modo crear
+    this.isModalOpen.set(true);
+  }
+
+  openCreateModal() {
+    this.selectedCategory.set(null);
+    this.isModalOpen.set(true);
+  }
+
+  openEditModal(row: any) {
+    this.selectedCategory.set(row);
+    this.isModalOpen.set(true);
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false);
+    this.selectedCategory.set(null);
   }
 
   onSearch(term: string) {
-    // filtrar tabla después
+    console.log('BUSCANDO:', term);
+    this.searchTerm.set(term);
   }
-  /* createCategory(data: { name: string; description: string }) {
+
+  saveCategory(data: { id?: string; name: string; description: string }) {
+    // update category
+    if (data.id) {
+      this.categoryService.updateCategory(data.id, data.name, data.description).subscribe({
+        next: () => {
+          this.categories.update((prev) =>
+            prev.map((cat) =>
+              cat.id === data.id ? { ...cat, name: data.name, description: data.description } : cat,
+            ),
+          );
+          this.closeModal();
+        },
+        error: (err) => console.error('Error actualizando categoría', err),
+      });
+
+      return;
+    }
+
+    // create category
     this.categoryService.createCategory(data.name, data.description).subscribe({
-      next: (res) => {
-        console.log('Categoría creada:', res);
-        this.isCreateCategoryOpen = false;
-        // actualizar la lista
-        this.categoryService.getCategories().subscribe((cats) => {
-          this.categories = cats;
-          this.cdr.markForCheck();
-        });
+      next: (newCategory: Category) => {
+        this.categories.update((prev) => [...prev, newCategory]);
+        this.closeModal();
       },
-      error: (err) => {
-        console.error('Error creando categoría:', err);
-      },
-    });
-  } */
-  loadCategories() {
-    this.categoryService.getCategories().subscribe((data) => {
-      this.categories = data;
-      this.cdr.markForCheck();
+      error: (err) => console.error('Error creando categoría', err),
     });
   }
 
-  /* createCategory(data: { name: string; description: string }) {
-    this.categoryService.createCategory(data.name, data.description).subscribe({
+  deleteCategory(row: any) {
+    this.categoryService.deleteCategory(row.id).subscribe({
       next: () => {
-        this.isCreateCategoryOpen = false;
-        this.loadCategories();
+        this.categories.update((prev) => prev.filter((cat) => cat.id !== row.id));
       },
-      error: (err) => console.error('Error creando categoría:', err),
-    });
-  } */
-
-  createCategory(data: { name: string; description: string }) {
-    const tempCat = { name: data.name, description: data.description };
-
-    // Agregar inmediatamente al array local
-    this.categories = [...this.categories, tempCat];
-
-    this.categoryService.createCategory(data.name, data.description).subscribe({
-      next: () => {
-        this.isCreateCategoryOpen = false;
-        // opcional: refrescar desde backend si quieres asegurar sincronización
-        this.loadCategories();
-      },
-      error: (err) => {
-        console.error('Error creando categoría:', err);
-        // remover temporal si falla
-        this.categories = this.categories.filter((c) => c !== tempCat);
-      },
+      error: (err) => console.error('Error eliminando categoría', err),
     });
   }
-
-  editCategory(cat: string) {}
-
-  deleteCategory(id: string) {}
+  editCategory(data: string) {}
 }

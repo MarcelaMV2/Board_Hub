@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Input, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,9 +20,14 @@ import { CategoryService } from '../../../services/category/category';
   ],
   templateUrl: './game-form.html',
 })
-export class GameFormComponent implements OnInit {
+export class GameFormComponent implements OnInit, OnChanges {
+  
   @Output() submitForm = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<void>();
+
+  @Input() gameData: any | null = null;
+  @Input() formType: 'create' | 'edit' = 'create';
+
   form: FormGroup;
   categories: any[] = [];
   selectedFile: File | null = null;
@@ -50,9 +55,30 @@ export class GameFormComponent implements OnInit {
         console.log('Categorias:', data);
         this.categories = data;
       },
-
       error: (err) => console.error(err),
     });
+  }
+
+  ngOnChanges(changes: any) {
+    if (changes.gameData) {
+      if (this.gameData) {
+        this.form.patchValue({
+          title: this.gameData.title,
+          idCategory: this.gameData.category.id,
+          description: this.gameData.description,
+          minPlayers: this.gameData.minPlayers,
+          maxPlayers: this.gameData.maxPlayers,
+          durationGame: this.gameData.durationGame,
+          stockTotal: this.gameData.stockTotal,
+          priceDay: this.gameData.priceDay,
+        });
+        this.previewUrl = this.gameData.image || null;
+      } else {
+        this.form.reset();
+        this.previewUrl = null;
+        this.selectedFile = null;
+      }
+    }
   }
 
   onFileChange(event: any) {

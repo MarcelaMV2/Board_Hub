@@ -53,3 +53,36 @@ html, body {
 .mat-mdc-input-element::placeholder {
   color: #6b7280 !important;
 }
+
+.success-snackbar {
+  background: #22c55e;
+  color: white;
+}
+
+.error-snackbar {
+  background: #16A34A;
+  color: white;
+}
+
+data-table {
+  .mat-mdc-table {
+    overflow: visible !important;
+  }
+
+  .mat-mdc-row {
+    overflow: visible !important;
+  }
+
+  .mat-mdc-cell {
+    overflow: visible !important;
+  }
+}
+data-table {
+  .mat-mdc-table-sticky-border-elem-right,
+  .mat-mdc-table {
+    width: 100%;
+  }
+}
+
+
+
