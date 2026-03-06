@@ -20,6 +20,7 @@ import {
 import { GameStatus } from '../enums/game_status.enum';
 import { Category } from 'src/category/entities/category.entity';
 import { Loan } from 'src/loans/entities/loan.entity';
+import { LoanItem } from 'src/loans/entities/loan-item.entity';
 
 @Entity({ name: 'games' })
 @Unique(['title', 'category'])
@@ -53,7 +54,7 @@ export class Game {
   @Field(() => Int)
   stockTotal: number;
 
-  @Column({ name: 'stock_available'})
+  @Column({ name: 'stock_available' })
   @Field(() => Int)
   stockAvailable: number;
 
@@ -73,6 +74,10 @@ export class Game {
   @Field(() => Int)
   priceDay: number;
 
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  image?: string;
+
   @CreateDateColumn({ name: 'create_date' })
   @Field(() => GraphQLISODateTime)
   createDate: Date;
@@ -90,7 +95,49 @@ export class Game {
   @Field(() => Category)
   category: Category;
 
-  @OneToMany(() => Loan, (loan) => loan.game)
-  @Field(() => Loan)
-  loans: Loan[];
+  @OneToMany(() => LoanItem, (item) => item.game)
+  @Field(() => [LoanItem])
+  loanItems: LoanItem[];
+
+  // constructor(
+  //   id: string,
+  //   title: string,
+  //   description: string,
+  //   minPlayers: number,
+  //   maxPlayers: number,
+  //   stockTotal: number,
+  //   stockAvailable: number,
+  //   status: GameStatus,
+  //   durationGame: number,
+  //   priceDay: number,
+  //   image: string,
+  //   createDate: Date,
+  //   updateDate: Date,
+  //   deleteDate: Date,
+  //   category: Category,
+  //   loanItems?: LoanItem[], // Opcional
+  // ) {
+  //   this.id = id;
+  //   this.title = title;
+  //   this.description = description;
+  //   this.minPlayers = minPlayers;
+  //   this.maxPlayers = maxPlayers;
+  //   this.stockTotal = stockTotal;
+  //   this.stockAvailable = stockAvailable; // También corregí esto
+  //   this.status = status || GameStatus.DISPONIBLE;
+  //   this.durationGame = durationGame;
+  //   this.priceDay = priceDay;
+  //   this.image = image;
+  //   this.createDate = new Date();
+  //   this.updateDate = new Date();
+  //   this.deleteDate = deleteDate;
+  //   this.category = category;
+  //   if (loanItems) {
+  //     this.loanItems = loanItems; // Solo asigna si se proporciona
+  //   }
+  // }
+
+  // updateStockAvailable(quantity: number): void {
+  //   this.stockAvailable -= quantity;
+  // }
 }

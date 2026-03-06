@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateGameInput {
@@ -31,6 +31,11 @@ export class CreateGameInput {
   @Field(() => Int)
   @IsNotEmpty({ message: 'El campo de precio no puede ir vacio' })
   priceDay: number;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  image: string;
 
   @Field(() => String)
   idCategory: string;

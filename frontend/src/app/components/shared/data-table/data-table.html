@@ -1,0 +1,167 @@
+<div class="table-wrapper mat-elevation-z8">
+
+  <!-- ══ DESKTOP: tabla normal ══ -->
+  <div class="hidden md:block">
+    <table mat-table [dataSource]="dataSource">
+      <ng-container *ngFor="let col of columnDefs" [matColumnDef]="col.key">
+        <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          <ng-container [ngTemplateOutlet]="cellTemplate"
+            [ngTemplateOutletContext]="{ col: col, element: element, i: i }">
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+
+  <!-- ══ MÓVIL: cards apiladas ══ -->
+  <div class="block md:hidden">
+    @for (element of dataSource.data; track element) {
+      <div class="mobile-card">
+        <!-- Siempre visible: cliente/nombre + actions -->
+        <div class="mobile-card-header">
+          <ng-container *ngFor="let col of columnDefs">
+            @if (col.type === 'cliente') {
+              <div class="flex items-center gap-3 flex-1">
+                @if (element.avatar) {
+                  <img [src]="element.avatar" class="w-9 h-9 rounded-full object-cover" />
+                } @else {
+                  <div class="w-9 h-9 rounded-full bg-[#2563EB] flex items-center justify-center text-xs font-bold">
+                    <img src="user.png" class="w-9 h-9 rounded-full object-cover" />
+                  </div>
+                }
+                <div>
+                  <p class="font-medium text-white text-sm">{{ element.nombre }}</p>
+                  <p class="text-[#94A3B8] text-xs">DNI: {{ element.dni }}</p>
+                </div>
+              </div>
+            }
+            @if (col.type === 'text' && col.key === 'name') {
+              <p class="font-medium text-white text-sm flex-1">{{ element[col.key] }}</p>
+            }
+          </ng-container>
+
+          <!-- Actions siempre visible -->
+          <app-dropdown-menu
+            [showView]="showView"
+            (onView)="onView(element)"
+            (onEdit)="onEdit(element)"
+            (onDelete)="onDelete(element)">
+          </app-dropdown-menu>
+        </div>
+
+        <!-- Detalles expandibles -->
+        <div class="mobile-card-details">
+          <ng-container *ngFor="let col of columnDefs">
+            @if (col.type !== 'cliente' && col.type !== 'actions' && col.type !== 'index' && col.key !== 'name') {
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">{{ col.label }}</span>
+                <div class="mobile-card-value">
+                  <ng-container [ngTemplateOutlet]="cellTemplate"
+                    [ngTemplateOutletContext]="{ col: col, element: element, i: 0 }">
+                  </ng-container>
+                </div>
+              </div>
+            }
+          </ng-container>
+        </div>
+      </div>
+    }
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
+
+<!-- Template reutilizable para celdas -->
+<ng-template #cellTemplate let-col="col" let-element="element" let-i="i">
+  <!-- index -->
+  <ng-container *ngIf="col.type === 'index'">
+    <span class="row-index">{{ i + 1 }}</span>
+  </ng-container>
+
+  <!-- cliente -->
+  <ng-container *ngIf="col.type === 'cliente'">
+    <div class="flex items-center gap-3">
+      @if (element.avatar) {
+        <img [src]="element.avatar" class="w-8 h-8 rounded-full object-cover" />
+      } @else {
+        <div class="w-8 h-8 rounded-full bg-[#2563EB] flex items-center justify-center text-xs font-bold">
+          <img src="user.png" class="w-8 h-8 rounded-full object-cover" />
+        </div>
+      }
+      <div>
+        <p class="font-medium">{{ element.nombre }}</p>
+        <p class="text-[#94A3B8] text-xs">DNI: {{ element.dni }}</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- estado -->
+  <ng-container *ngIf="col.type === 'status'">
+    <app-status-chip *ngIf="element[col.key] > 0" [label]="element[col.key] + ' Activos'" type="active"></app-status-chip>
+    <app-status-chip *ngIf="element[col.key] === 0" label="Sin préstamos" type="sin-prestamos"></app-status-chip>
+  </ng-container>
+
+  <!-- loan-status -->
+  <ng-container *ngIf="col.type === 'loan-status'">
+    <app-status-chip *ngIf="element[col.key] === 'ACTIVO'" label="Activo" type="active"></app-status-chip>
+    <app-status-chip *ngIf="element[col.key] === 'DEVUELTO'" label="Devuelto" type="devuelto"></app-status-chip>
+    <app-status-chip *ngIf="element[col.key] === 'VENCIDO'" label="Vencido" type="vencido"></app-status-chip>
+  </ng-container>
+
+  <!-- badges -->
+  <ng-container *ngIf="col.type === 'badges'">
+    <div class="badges-cell">
+      <span class="badge badge-blue" *ngFor="let item of element[col.key]">{{ item }}</span>
+    </div>
+  </ng-container>
+
+  <!-- text -->
+  <ng-container *ngIf="col.type === 'text'">{{ element[col.key] }}</ng-container>
+
+  <!-- game-badges -->
+  <ng-container *ngIf="col.type === 'game-badges'">
+    <div class="game-badges-cell">
+      <ng-container *ngFor="let game of element[col.key].slice(0, 2)">
+        <div class="game-chip">
+          <img *ngIf="game.image" [src]="game.image" class="game-chip-img" alt="game" />
+          <div *ngIf="!game.image" class="game-chip-fallback">{{ game.title[0] }}</div>
+          <span>{{ game.title }}</span>
+        </div>
+      </ng-container>
+      <span *ngIf="element[col.key].length > 2" class="badge badge-gray">
+        +{{ element[col.key].length - 2 }} más
+      </span>
+    </div>
+  </ng-container>
+
+  <!-- status-action -->
+  <ng-container *ngIf="col.type === 'status-action'">
+    <div class="status-action-wrapper">
+      <app-status-chip
+        [label]="element[col.key] === 'ACTIVO' ? 'Activo' : element[col.key] === 'DEVUELTO' ? 'Devuelto' : 'Vencido'"
+        [type]="element[col.key] === 'ACTIVO' ? 'active' : element[col.key] === 'DEVUELTO' ? 'devuelto' : 'vencido'"
+        (click)="element[col.key] !== 'DEVUELTO' && toggleStatusMenu(element)">
+      </app-status-chip>
+      @if (activeStatusRow === element) {
+        <div class="fixed inset-0 z-10" (click)="activeStatusRow = null"></div>
+        <div class="status-dropdown">
+          @if (element[col.key] === 'ACTIVO') {
+            <button (click)="onStatusChange(element, 'DEVUELTO'); activeStatusRow = null" class="status-option devuelto">✓ Marcar devuelto</button>
+            <button (click)="onStatusChange(element, 'VENCIDO'); activeStatusRow = null" class="status-option vencido">✗ Marcar vencido</button>
+          }
+          @if (element[col.key] === 'VENCIDO') {
+            <button (click)="onStatusChange(element, 'DEVUELTO'); activeStatusRow = null" class="status-option devuelto">✓ Marcar devuelto</button>
+          }
+        </div>
+      }
+    </div>
+  </ng-container>
+
+  <!-- actions -->
+  <ng-container *ngIf="col.type === 'actions'">
+    <app-dropdown-menu [showView]="showView" (onView)="onView(element)" (onEdit)="onEdit(element)" (onDelete)="onDelete(element)"></app-dropdown-menu>
+  </ng-container>
+</ng-template>

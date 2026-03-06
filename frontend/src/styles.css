@@ -1,0 +1,88 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+
+.mat-mdc-select-value-text {
+  color: white !important;
+}
+
+.mat-mdc-select-placeholder {
+  color: #6b7280 !important;
+}
+
+.mat-mdc-option {
+  color: white !important;
+  background-color: #1e293b !important;
+}
+
+.mat-mdc-option:hover {
+  background-color: #334155 !important;
+}
+
+.mat-mdc-select-panel {
+  background-color: #1e293b !important;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+  border-color: #4b5563 !important;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline__trailing {
+  border-color: #3b82f6 !important;
+}
+
+.mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+.mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+.mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #3b82f6 !important;
+}
+
+.mat-mdc-input-element {
+  color: white !important;
+}
+
+.mat-mdc-input-element::placeholder {
+  color: #6b7280 !important;
+}
+
+.success-snackbar {
+  background: #22c55e;
+  color: white;
+}
+
+.error-snackbar {
+  background: #16A34A;
+  color: white;
+}
+
+data-table {
+  .mat-mdc-table {
+    overflow: visible !important;
+  }
+
+  .mat-mdc-row {
+    overflow: visible !important;
+  }
+
+  .mat-mdc-cell {
+    overflow: visible !important;
+  }
+}
+data-table {
+  .mat-mdc-table-sticky-border-elem-right,
+  .mat-mdc-table {
+    width: 100%;
+  }
+}
+
+
+

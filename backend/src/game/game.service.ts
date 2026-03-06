@@ -54,14 +54,26 @@ export class GameService {
   }
 
   async update(id: string, updateGameInput: UpdateGameInput): Promise<Game> {
-    const game = await this.gameRepository.preload(updateGameInput);
+    const game = await this.gameRepository.findOne({
+      where: { id },
+      relations: ['category'],
+    });
     if (!game) throw new NotFoundException('El juego no esta registrado');
+
+    if (
+      updateGameInput.stockTotal !== undefined &&
+      updateGameInput.stockTotal !== game.stockTotal
+    ) {
+      const prestados = game.stockTotal - game.stockAvailable;
+      game.stockAvailable = Math.max(0, updateGameInput.stockTotal - prestados);
+    }
+
+    Object.assign(game, updateGameInput);
     return this.gameRepository.save(game);
   }
 
   async remove(id: string): Promise<Game> {
     const game = await this.findOne(id);
-    this.gameRepository.softRemove(game);
-    return game;
+    return this.gameRepository.softRemove(game);
   }
 }

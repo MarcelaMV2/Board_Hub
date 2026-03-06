@@ -1,0 +1,353 @@
+<div class="grid grid-cols-2 gap-6">
+  <!-- ══════════ COLUMNA IZQUIERDA ══════════ -->
+  <div class="flex flex-col gap-5">
+    <!-- BUSCAR CLIENTE -->
+    <div>
+      <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+        Buscar Cliente
+      </label>
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Nombre o teléfono..."
+          [(ngModel)]="clientSearch"
+          (input)="onClientSearch()"
+          [disabled]="!!selectedClient"
+          class="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2 text-sm text-white placeholder-[#475569] outline-none focus:border-[#3b82f6] transition disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        <!-- Dropdown resultados — solo si NO hay cliente seleccionado -->
+        @if (clientSearch && filteredClients.length > 0 && !selectedClient) {
+          <div
+            class="absolute z-10 w-full mt-1 bg-[#1e293b] border border-[#334155] rounded-lg overflow-hidden shadow-xl"
+          >
+            @for (client of filteredClients; track client.id) {
+              <div
+                (click)="selectClient(client)"
+                class="flex items-center gap-3 px-3 py-2 hover:bg-[#334155] cursor-pointer transition"
+              >
+                @if (client.avatar) {
+                  <img [src]="client.avatar" class="w-7 h-7 rounded-full object-cover" />
+                } @else {
+                  <div
+                    class="w-7 h-7 rounded-full bg-[#334155] flex items-center justify-center text-xs font-bold text-white"
+                  >
+                    {{ getInitials(client.nombre) }}
+                  </div>
+                }
+                <div>
+                  <p class="text-sm text-white font-medium">{{ client.nombre }}</p>
+                  <p class="text-xs text-[#64748b]">{{ client.celular }}</p>
+                </div>
+                @if (hasActiveLoan(client)) {
+                  <span
+                    class="ml-auto text-xs bg-[#7f1d1d] text-[#fca5a5] px-2 py-0.5 rounded-full"
+                  >
+                    Préstamo activo
+                  </span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Cliente seleccionado -->
+      @if (selectedClient) {
+        <div
+          class="mt-2 flex items-center gap-3 bg-[#0f172a] border border-[#1d4ed8] rounded-lg px-3 py-2"
+        >
+          @if (selectedClient.avatar) {
+            <img [src]="selectedClient.avatar" class="w-8 h-8 rounded-full object-cover" />
+          } @else {
+            <div
+              class="w-8 h-8 rounded-full bg-[#1d4ed8] flex items-center justify-center text-xs font-bold text-white"
+            >
+              {{ getInitials(selectedClient.nombre) }}
+            </div>
+          }
+          <div class="flex-1">
+            <p class="text-sm text-white font-medium">{{ selectedClient.nombre }}</p>
+            <p class="text-xs text-[#64748b]">{{ selectedClient.telefono }}</p>
+          </div>
+          <button
+            (click)="clearClient()"
+            class="text-[#475569] hover:text-white text-lg transition"
+          >
+            ✕
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- FECHAS -->
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+          Fecha inicio
+        </label>
+        <input
+          type="date"
+          [(ngModel)]="startDate"
+          (change)="recalcTotal()"
+          class="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#3b82f6] transition"
+        />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+          Fecha fin
+        </label>
+        <input
+          type="date"
+          [(ngModel)]="endDate"
+          (change)="recalcTotal()"
+          [class.border-[#ef4444]]="endDateError"
+          [class.border-[#334155]]="!endDateError"
+          class="w-full bg-[#0f172a] border rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#3b82f6] transition"
+        />
+        <!-- Mensaje de error fecha fin -->
+        @if (endDateError) {
+          <p class="mt-1 text-xs text-[#f87171] flex items-center gap-1">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.93 9.412-1 .26V6h1v4.672zM8 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z"
+              />
+            </svg>
+            La fecha fin no puede ser menor a la fecha de inicio
+          </p>
+        }
+      </div>
+    </div>
+    <div>
+      <!-- ESTADO — solo en modo edición -->
+      @if (isEditMode) {
+        <div class="col-span-3">
+          <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+            Estado
+          </label>
+          <div class="flex gap-2">
+            <button
+              (click)="selectedStatus = 'ACTIVO'"
+              class="flex-1 py-2 px-3 rounded-full text-xs font-medium border transition"
+              [class.opacity-40]="selectedStatus !== 'ACTIVO'"
+              [class.border-[#1d4ed8]]="true"
+              [class.bg-[#1E3A5F]]="true"
+              [class.text-[#60A5FA]]="true"
+            >
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#60A5FA] mr-1.5"></span>
+              Activo
+            </button>
+            <button
+              (click)="selectedStatus = 'DEVUELTO'"
+              class="flex-1 py-2 px-3 rounded-full text-xs font-medium border transition"
+              [class.opacity-40]="selectedStatus !== 'DEVUELTO'"
+              [class.border-green-500]="true"
+              [class.bg-[#14532D]]="true"
+              [class.text-[#4ADE80]]="true"
+            >
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#4ADE80] mr-1.5"></span>
+              Devuelto
+            </button>
+            <button
+              (click)="selectedStatus = 'VENCIDO'"
+              class="flex-1 py-2 px-3 rounded-full text-xs font-medium border transition"
+              [class.opacity-40]="selectedStatus !== 'VENCIDO'"
+              [class.border-red-500]="true"
+              [class.bg-[#3B1A1A]]="true"
+              [class.text-[#F87171]]="true"
+            >
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#F87171] mr-1.5"></span>
+              Vencido
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- juegos seleccionados -->
+    <div>
+      <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+        Juegos seleccionados
+      </label>
+
+      @if (selectedGames.length === 0) {
+        <div
+          class="flex flex-col items-center justify-center bg-[#0f172a] border border-dashed border-[#334155] rounded-lg py-6 text-[#475569] text-sm gap-2"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <path d="M8 21h8M12 17v4" />
+          </svg>
+          Selecciona juegos del listado
+        </div>
+      } @else {
+        <div class="flex flex-col gap-2">
+          @for (item of selectedGames; track item.game.id) {
+            <div
+              class="flex items-center gap-3 bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2"
+            >
+              @if (item.game.image) {
+                <img [src]="item.game.image" class="w-8 h-8 rounded object-cover" />
+              } @else {
+                <div class="w-8 h-8 rounded bg-[#1e293b] flex items-center justify-center text-lg">
+                  🎲
+                </div>
+              }
+              <div class="flex-1">
+                <p class="text-sm text-white font-medium">{{ item.game.title }}</p>
+                <p class="text-xs text-[#64748b]">Bs. {{ item.game.priceDay }}/día</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  (click)="decreaseQty(item)"
+                  class="w-6 h-6 rounded bg-[#1e293b] text-white flex items-center justify-center hover:bg-[#334155] transition text-sm"
+                >
+                  −
+                </button>
+                <span class="text-sm text-white w-4 text-center">{{ item.quantity }}</span>
+                <button
+                  (click)="increaseQty(item)"
+                  class="w-6 h-6 rounded bg-[#1e293b] text-white flex items-center justify-center hover:bg-[#334155] transition text-sm"
+                >
+                  +
+                </button>
+              </div>
+              <p class="text-sm font-semibold text-[#4ade80] w-16 text-right">
+                Bs. {{ item.game.priceDay * item.quantity * days }}
+              </p>
+              <button
+                (click)="removeGame(item)"
+                class="text-[#475569] hover:text-[#f87171] transition text-lg ml-1"
+              >
+                ✕
+              </button>
+            </div>
+            @if (quantityError[item.game.id]) {
+              <p class="text-xs text-[#f87171] flex items-center gap-1 px-1">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                  <path
+                    d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.93 9.412-1 .26V6h1v4.672zM8 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z"
+                  />
+                </svg>
+                {{ quantityError[item.game.id] }}
+              </p>
+            }
+          }
+        </div>
+      }
+    </div>
+
+    <!-- calculos del costo total -->
+    @if (selectedGames.length > 0 && days > 0) {
+      <div class="bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 flex flex-col gap-1">
+        <div class="flex justify-between text-xs text-[#64748b]">
+          <span>Días de préstamo</span>
+          <span>{{ days }} día{{ days !== 1 ? 's' : '' }}</span>
+        </div>
+        <div class="flex justify-between text-xs text-[#64748b]">
+          <span>Juegos</span>
+          <span>{{ selectedGames.length }}</span>
+        </div>
+        <div class="border-t border-[#334155] my-1"></div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-semibold text-white">Precio Total</span>
+          <span class="text-lg font-bold text-[#4ade80]">Bs. {{ priceTotal }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- botones -->
+    <div class="flex gap-3 mt-2">
+      <button
+        (click)="cancel.emit()"
+        class="flex-1 py-2 rounded-lg border border-[#334155] text-[#94A3B8] hover:bg-[#334155] transition text-sm"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="submit()"
+        [disabled]="!canSubmit()"
+        class="flex-1 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {{ isEditMode ? 'Guardar cambios' : 'Registrar préstamo' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- lado de juegos -->
+  <div class="flex flex-col gap-4">
+    <div>
+      <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+        Buscar Juego
+      </label>
+      <input
+        type="text"
+        placeholder="Buscar por título o categoría..."
+        [(ngModel)]="gameSearch"
+        (input)="onGameSearch()"
+        class="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2 text-sm text-white placeholder-[#475569] outline-none focus:border-[#3b82f6] transition"
+      />
+    </div>
+
+    <div
+      class="overflow-y-auto max-h-75 flex flex-col gap-1 pr-1 scrollbar-thin scrollbar-thumb-[#334155] scrollbar-track-transparent"
+    >
+      @for (game of filteredGames; track game.id) {
+        <div
+          (click)="addGame(game)"
+          [class.opacity-40]="isGameSelected(game) || game.stockAvailable === 0"
+          [class.cursor-not-allowed]="isGameSelected(game) || game.stockAvailable === 0"
+          [class.cursor-pointer]="!isGameSelected(game) && game.stockAvailable > 0"
+          class="flex items-center gap-3 bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2 hover:border-[#3b82f6] hover:bg-[#0f2040] transition"
+        >
+          @if (game.image) {
+            <img [src]="game.image" class="w-9 h-9 rounded object-cover" />
+          } @else {
+            <div class="w-9 h-9 rounded bg-[#1e293b] flex items-center justify-center text-xl">
+              🎲
+            </div>
+          }
+          <div class="flex-1">
+            <p class="text-sm text-white font-medium">{{ game.title }}</p>
+            <p class="text-xs text-[#64748b]">{{ game.category.name }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold text-[#60a5fa]">{{ game.priceDay }} Bs/día</p>
+            <p
+              class="text-xs"
+              [class.text-[#4ade80]]="game.stockAvailable > 0"
+              [class.text-[#f87171]]="game.stockAvailable === 0"
+            >
+              {{ game.stockAvailable > 0 ? 'Stock: ' + game.stockAvailable : 'Sin stock' }}
+            </p>
+          </div>
+          @if (isGameSelected(game)) {
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="#4ade80">
+              <path
+                d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
+              />
+            </svg>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label class="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+        Notas
+      </label>
+      <textarea
+        [(ngModel)]="note"
+        placeholder="Observaciones del préstamo..."
+        rows="3"
+        class="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2 text-sm text-white placeholder-[#475569] outline-none focus:border-[#3b82f6] transition resize-none"
+      ></textarea>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<page-header
+  title="Gestión de clientes"
+  description="Gestiona los clientes"
+  buttonLabel="Nuevo cliente"
+  (buttonClick)="openCreateClientModal()"
+/>
+
+<div class="flex justify-end mb-4">
+  <search-input placeholder="Buscar por DNI, celular..." (searchChange)="onSearch($event)" />
+</div>
+
+<div class="w-full overflow-x-auto rounded-lg">
+  <data-table
+    [columnDefs]="clientColumns"
+    [data]="filteredClients()"
+    (edit)="openEditClient($event)"
+    (delete)="deleteClient($event)">
+  </data-table>
+</div>
+
+<app-modal [isOpen]="isClientModalOpen()" (close)="closeClientModal()">
+  <div>
+    <modal-layout
+      [title]="selectedClient() ? 'Editar Cliente' : 'Registrar nuevo Cliente'"
+      [description]="selectedClient() ? 'Modifica los datos del cliente' : 'Añade un nuevo cliente al sistema'"
+      [buttonLabel]="selectedClient() ? 'Guardar cambios' : 'Crear cliente'"
+    >
+      <app-client-form
+        [formType]="selectedClient() ? 'edit' : 'create'"
+        [clientData]="selectedClient()"
+        (submitForm)="saveClient($event)"
+        (cancel)="closeClientModal()"
+      ></app-client-form>
+    </modal-layout>
+  </div>
+</app-modal>

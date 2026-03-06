@@ -10,9 +10,15 @@ import { CategoryModule } from './category/category.module';
 import { GameModule } from './game/game.module';
 import { ClientsModule } from './clients/clients.module';
 import { LoansModule } from './loans/loans.module';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { UploadController } from './upload/upload.controller';
+import { UploadModule } from './upload/upload.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -37,8 +43,10 @@ import { LoansModule } from './loans/loans.module';
     GameModule,
     ClientsModule,
     LoansModule,
+    CloudinaryModule,
+    UploadModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [UploadController],
+  providers: [CloudinaryService],
 })
 export class AppModule {}

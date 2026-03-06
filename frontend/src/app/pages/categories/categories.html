@@ -1,0 +1,35 @@
+<page-header
+  title="Gestión de categorias"
+  description="Gestiona las categorias de tus juegos"
+  buttonLabel="Nueva categoria"
+  (buttonClick)="openModalCategory()"
+/>
+
+<div class="flex justify-end mb-4">
+  <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+</div>
+
+<div class="w-full overflow-x-auto rounded-lg">
+  <data-table
+    [columnDefs]="categoryColumns"
+    [data]="filteredCategories()"
+    (edit)="openEditModal($event)"
+    (delete)="deleteCategory($event)">
+  </data-table>
+</div>
+
+<app-modal [isOpen]="isModalOpen()" (close)="isModalOpen.set(false)">
+  <div>
+    <modal-layout
+      title="Registrar nueva categoria"
+      description="Añade una nueva categoria al sistema"
+      buttonLabel="Registrar categoria"
+    >
+      <app-category-form
+        [category]="selectedCategory()"
+        (submitForm)="saveCategory($event)"
+        (cancel)="closeModal()"
+      ></app-category-form>
+    </modal-layout>
+  </div>
+</app-modal>

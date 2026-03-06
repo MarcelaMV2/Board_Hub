@@ -1,0 +1,88 @@
+<page-header
+  title="Juegos"
+  description="Gestiona el catalogo de juegos de mesa"
+  buttonLabel="Nuevo juego"
+  (buttonClick)="openCreateGameModal()"
+/>
+
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+  <btn-secondary
+    [tabs]="categories"
+    [selected]="selectedCategory"
+    (tabChange)="filterByCategory($event)"
+  />
+
+  <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  @for (game of filteredGames; track game.id) {
+    <div class="bg-[#1E293B] rounded-xl overflow-hidden border border-[#334155]">
+      <!-- imagen placeholder -->
+      <div class="relative h-48 bg-[#0F172A] flex items-center justify-center">
+        <img
+          src="{{ game.image }}"
+          alt=""
+          class="text-[#334155] text-4xlclass w-full h-full object-cover"
+        />
+        <span
+          class="absolute top-2 left-2 text-xs bg-[#1E293B] text-[#94A3B8] px-2 py-1 rounded-full"
+        >
+          {{ game.category?.name }}
+        </span>
+        <div class="absolute top-1 right-1 bg-amber-50">
+          <app-dropdown-menu (onEdit)="editGame(game)" (onDelete)="deleteGame(game.id)" />
+        </div>
+      </div>
+
+      <div class="p-4">
+        <div class="flex flex-row gap-7 justify-between">
+          <h3 class="text-[#F8FAFC] font-semibold">{{ game.title }}</h3>
+          <span
+            class="top-2 right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full"
+          >
+            Bs. {{ game.priceDay }}/día
+          </span>
+        </div>
+
+        <div class="flex gap-4 mt-2 text-[#94A3B8] text-xs">
+          <div class="flex flex-row gap-2">
+            <img src="user.png" alt="" class="w-5 h-5" /><span
+              >{{ game.minPlayers }}-{{ game.maxPlayers }} jugadores</span
+            >
+          </div>
+          <div class="flex flex-row gap-2">
+            <img src="clock.png" alt="" class="w-5 h-5" /><span> {{ game.durationGame }}m</span>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          @if (game.status === 'DISPONIBLE') {
+            <app-status-chip [label]="game.stockAvailable + ' disponibles'" type="disponible" />
+          } @else {
+            <app-status-chip label="Agotado" type="agotado" />
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<app-modal [isOpen]="isGameModalOpen" (close)="closeGameModal()">
+  <div>
+    <modal-layout
+      [title]="selectedGame ? 'Editar Juego' : 'Registrar Juegos'"
+      [description]="
+        selectedGame ? 'Modifica los datos del juego' : 'Añade un nuevo juego al sistema'
+      "
+      [buttonLabel]="selectedGame ? 'Guardar cambios' : 'Crear Juego'"
+    >
+      <app-game-form
+        [formType]="selectedGame ? 'edit' : 'create'"
+        [gameData]="selectedGame"
+        (submitForm)="saveGame($event)"
+        (cancel)="closeGameModal()"
+      ></app-game-form>
+    </modal-layout>
+  </div>
+</app-modal>

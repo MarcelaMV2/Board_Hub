@@ -10,10 +10,12 @@ type Client {
   email: String!
   perfil: String
   password: String
+  totalLoans: Int
+  activeLoans: Int
   createDate: DateTime!
   updateDate: DateTime!
   deleteDate: DateTime
-  loans: Loan!
+  loans: [Loan!]!
 }
 
 """
@@ -27,13 +29,12 @@ type Loan {
   endDate: DateTime!
   priceTotal: Int!
   devolutionDate: DateTime
-  quantity: Int!
   status: LoanStatus!
   note: String
   createDate: DateTime!
   updateDate: DateTime!
   deleteDate: DateTime
-  game: Game!
+  items: [LoanItem!]!
   client: Client!
 }
 
@@ -41,6 +42,17 @@ enum LoanStatus {
   ACTIVO
   VENCIDO
   DEVUELTO
+}
+
+type LoanItem {
+  id: ID!
+  priceSnapshot: Int!
+  quantity: Int!
+  subtotal: Int!
+  createDate: DateTime!
+  deleteDate: DateTime
+  loan: Loan!
+  game: Game!
 }
 
 type Game {
@@ -54,11 +66,12 @@ type Game {
   status: GameStatus!
   durationGame: Int!
   priceDay: Int!
+  image: String
   createDate: DateTime!
   updateDate: DateTime!
   deleteDate: DateTime
   category: Category!
-  loans: Loan!
+  loanItems: [LoanItem!]!
 }
 
 enum GameStatus {
@@ -122,6 +135,7 @@ input CreateGameInput {
   stockTotal: Int!
   durationGame: Int
   priceDay: Int!
+  image: String
   idCategory: String!
 }
 
@@ -133,8 +147,9 @@ input UpdateGameInput {
   stockTotal: Int
   durationGame: Int
   priceDay: Int
+  image: String
   idCategory: String
-  id: String!
+  id: ID!
 }
 
 input CreateClientInput {
@@ -157,20 +172,23 @@ input UpdateClientInput {
 }
 
 input CreateLoanInput {
-  idGame: String!
   idClient: String!
   startDate: DateTime!
   endDate: DateTime!
-  quantity: Int!
+  items: [LoanItemInput!]!
   note: String
 }
 
+input LoanItemInput {
+  idGame: String!
+  quantity: Int!
+}
+
 input UpdateLoanInput {
-  idGame: String
   idClient: String
   startDate: DateTime
   endDate: DateTime
-  quantity: Int
+  items: [LoanItemInput!]
   note: String
   id: ID!
 }
