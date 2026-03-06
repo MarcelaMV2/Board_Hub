@@ -5,7 +5,7 @@
   (buttonClick)="openCreateGameModal()"
 />
 
-<div class="flex flex-row justify-between items-center mb-4">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
   <btn-secondary
     [tabs]="categories"
     [selected]="selectedCategory"
@@ -15,7 +15,7 @@
   <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
 </div>
 
-<div class="grid grid-cols-4 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
   @for (game of filteredGames; track game.id) {
     <div class="bg-[#1E293B] rounded-xl overflow-hidden border border-[#334155]">
       <!-- imagen placeholder -->
