@@ -5,9 +5,11 @@
   (buttonClick)="openModalLoan()"
 />
 
-<div class="flex flex-row justify-between items-center mb-4">
-  <btn-secondary [tabs]="tabs" [selected]="selectedTab" (tabChange)="filterByTab($event)" />
-  <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <btn-secondary [tabs]="tabs" [selected]="selectedTab" (tabChange)="filterByTab($event)" />
+    <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
+  </div>
 </div>
 
 <div class="w-full overflow-x-auto rounded-lg">
