@@ -6,15 +6,26 @@
     @for (item of menuOptions; track $index) {
       <a
         [routerLink]="item.route"
-        routerLinkActive="bg-blue-500 text-white"
-        class="w-full px-2 inline-flex gap-3 items-center rounded-lg py-3 hover:bg-blue-500 hover:items-white transition ease-linear duration-150"
+        routerLinkActive="bg-blue-500"
+        #rla="routerLinkActive"
+        (click)="itemClicked.emit()"
+        class="w-full px-2 inline-flex gap-3 items-center rounded-lg py-3 hover:bg-[#2f3b4e] transition ease-linear duration-150"
       >
-        <div class="w-6 h-6 hover:to-white">
-          <img src="{{ item.icon }}" alt="" />
-        </div>
-        <div class="w-43 h-6 text-[#94A3B8] hover:text-white">
-          <p>{{ item.label }}</p>
-        </div>
+        <lucide-icon
+          [img]="item.icon"
+          [size]="20"
+          [class.text-white]="rla.isActive"
+          [class.text-[#94A3B8]]="!rla.isActive"
+          class="transition"
+        >
+        </lucide-icon>
+        <span
+          [class.text-white]="rla.isActive"
+          [class.text-[#94A3B8]]="!rla.isActive"
+          class="text-sm transition"
+        >
+          {{ item.label }}
+        </span>
       </a>
     }
   </div>

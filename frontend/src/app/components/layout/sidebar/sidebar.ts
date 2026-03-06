@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { SideMenuHeader } from "./side-menu-header/side-menu-header";
 import { SideMenuItems } from "./side-menu-items/side-menu-items";
 
@@ -8,4 +8,6 @@ import { SideMenuItems } from "./side-menu-items/side-menu-items";
   templateUrl: './sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Sidebar { }
+export class Sidebar {
+   @Output() closeSidebar = new EventEmitter<void>();
+}

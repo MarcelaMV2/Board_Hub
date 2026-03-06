@@ -1,0 +1,157 @@
+// styles.scss GLOBAL
+data-table {
+  .mat-elevation-z8 {
+    border-radius: 8px !important;
+    border: 1px solid rgba(51, 65, 85, 1) !important;
+    overflow: hidden !important;  // 👈 esto es lo que falta
+  }
+
+  table {
+    width: 100%;
+    background: transparent !important;
+    border-radius: 8px !important;
+  }
+
+  tr.mat-mdc-header-row {
+    background: rgba(27, 39, 59, 0.3) !important;
+  }
+
+  th.mat-mdc-header-cell {
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-bottom: none !important;
+  }
+
+  // ─── Filas ────────────────────────────────
+  tr.mat-mdc-row {
+    background: rgba(27, 39, 59, 0.8)  !important;
+    // border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+    &:hover {
+      background: rgba(30, 41, 59, 0.95) !important;
+    }
+
+   /*  &:last-child {
+      border-bottom: none !important;
+    } */
+  }
+
+  td.mat-mdc-cell {
+    color: rgba(255, 255, 255, 0.75) !important;
+    border-bottom: none !important;
+  }
+
+  // ─── Paginator ────────────────────────────
+  mat-paginator {
+    background: rgba(27, 39, 59, 0.8) !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    border-top: 1px solid rgba(51, 65, 85, 1) ;
+
+    .mat-mdc-paginator-range-label,
+    .mat-mdc-select-value-text {
+      color: rgba(255, 255, 255, 0.75) !important;
+    }
+    .mat-mdc-icon-button svg {
+      fill: rgba(255, 255, 255, 0.75) !important;
+    }
+
+    // ─── Botón deshabilitado (primera/última página) ───────
+    .mat-mdc-button-disabled svg {
+      fill: rgba(255, 255, 255, 0.75) !important;
+    }
+
+    // ─── Ripple/hover del botón ────────────────────────────
+    .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before {
+      background: rgba(255, 255, 255, 0.75) !important;
+    }
+  }
+
+}
+
+td.mat-mdc-cell:has(app-dropdown-menu) {
+  overflow: visible !important;
+  position: relative;
+}
+
+.game-badges-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.game-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  background: rgba(59, 130, 246, 0.10);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #60a5fa;
+}
+
+.game-chip-img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.game-chip-fallback {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #60a5fa;
+}
+
+.status-action-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.status-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.status-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  transition: background 0.15s;
+
+  &:hover { background: #334155; }
+
+  &.devuelto { color: #4ade80; }
+  &.vencido { color: #f87171; }
+}
+
+.table-wrapper {
+  border-radius: 8px;
+  overflow: visible !important; // 👈 cambia hidden por visible
+}
+data-table {
+  .mat-mdc-table-sticky-border-elem-right,
+  .mat-mdc-table {
+    width: 100%;
+  }
+}

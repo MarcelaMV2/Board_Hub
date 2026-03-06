@@ -1,4 +1,4 @@
-<div class="flex flex-col w-fit h-[820px] p-[20px] bg-[#1B273B] border-r border-[#334155] gap-[20px]">
+<div class="flex flex-col w-64 h-full p-5 bg-[#1B273B] border-r border-[#334155] gap-5">
   <side-menu-header></side-menu-header>
-  <side-menu-items></side-menu-items>
+  <side-menu-items (itemClicked)="closeSidebar.emit()"></side-menu-items>
 </div>

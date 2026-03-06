@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-dropdown-menu',
@@ -9,6 +9,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angul
 export class DropdownMenu {
   @Output() onEdit = new EventEmitter<void>();
   @Output() onDelete = new EventEmitter<void>();
+
+  @Output() onView = new EventEmitter<void>(); // 👈
+  @Input() showView: boolean = false;
 
   isOpen = false;
 

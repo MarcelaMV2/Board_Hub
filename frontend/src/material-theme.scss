@@ -35,3 +35,11 @@ body {
   margin: 0;
   height: 100%;
 }
+
+::ng-deep .dark-table .mat-mdc-header-row {
+  background: rgba(30, 41, 59, 0.5) !important;
+}
+.dark-table {
+  --mat-table-background-color: transparent;
+  --mat-table-header-headline-color: rgba(255,255,255,0.75);
+}

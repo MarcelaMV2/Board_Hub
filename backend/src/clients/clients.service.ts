@@ -40,8 +40,30 @@ export class ClientsService {
   }
 
   async findAll(): Promise<Client[]> {
-    return await this.clientRepository.find({
-      relations: ['loans']
+    const clients = await this.clientRepository
+      .createQueryBuilder('client')
+      .loadRelationCountAndMap('client.totalLoans', 'client.loans')
+      .leftJoinAndSelect(
+        'client.loans',
+        'loan',
+        'loan.status = :status AND loan.delete_date IS NULL',
+        { status: 'ACTIVO' },
+      )
+      .leftJoinAndSelect('loan.items', 'item')
+      .getMany();
+
+    return clients.map((client: any) => {
+      const activeGames = (client.loans ?? []).reduce(
+        (sum: number, loan: any) =>
+          sum +
+          (loan.items ?? []).reduce(
+            (s: number, item: any) => s + item.quantity,
+            0,
+          ),
+        0,
+      );
+      client.activeLoans = activeGames;
+      return client;
     });
   }
 

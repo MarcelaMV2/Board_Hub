@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { BtnPrimary } from "../btn-primary/btn-primary";
+import { LucideAngularModule, Plus } from 'lucide-angular';
 
 @Component({
   selector: 'page-header',
@@ -12,4 +13,6 @@ export class PageHeader {
   @Input() description: string = '';
   @Input() buttonLabel: string = '';
   @Output() buttonClick = new EventEmitter<void>();
+
+  readonly Plus = Plus;
  }

@@ -2,89 +2,34 @@
   title="Gestión de clientes"
   description="Gestiona los clientes"
   buttonLabel="Nuevo cliente"
-  (buttonClick)="openModalClient()"
+  (buttonClick)="openCreateClientModal()"
 />
 
 <div class="flex justify-end mb-4">
   <search-input placeholder="Buscar por DNI, celular..." (searchChange)="onSearch($event)" />
 </div>
 
-<div class="w-full rounded-lg border border-[#334155] bg-[#111827] mt-4">
-  <table class="w-full text-sm text-[#F8FAFC]">
-    <thead>
-      <tr class="border-b border-[#334155] text-[#94A3B8] bg-[#1b273b] text-left">
-        <th class="px-4 py-3 w-10">N</th>
-        <th class="px-4 py-3">Cliente</th>
-        <th class="px-4 py-3">Celular</th>
-        <th class="px-4 py-3">Correo Electrónico</th>
-        <th class="px-4 py-3">Préstamos activos</th>
-        <th class="px-4 py-3">Total Histórico</th>
-        <th class="px-4 py-3">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (client of clients; track client.id) {
-        <tr class="border-b border-[#334155] hover:bg-[#1E293B] transition">
-          <td class="px-4 py-4 text-[#94A3B8]">{{ $index + 1 }}</td>
-          <td class="px-4 py-4">
-            <div class="flex items-center gap-3">
-              @if (client.perfil) {
-                <img [src]="client.perfil" class="w-8 h-8 rounded-full object-cover" />
-              } @else {
-                <div
-                  class="w-8 h-8 rounded-full bg-[#2563EB] flex items-center justify-center text-xs font-bold"
-                >
-                  {{ getInitials(client.fullName) }}
-                </div>
-              }
-              <div>
-                <p class="font-medium">{{ client.fullName }}</p>
-                <p class="text-[#94A3B8] text-xs">DNI: {{ client.dni }}</p>
-              </div>
-            </div>
-          </td>
-          <td class="px-4 py-4 text-[#94A3B8]">{{ client.telefono }}</td>
-          <td class="px-4 py-4 text-[#94A3B8]">{{ client.email }}</td>
-          <td class="px-4 py-4">
-            @if (getActiveLoans(client.loans) > 0) {
-              <app-status-chip [label]="getActiveLoans(client.loans) + ' Activos'" type="active" />
-            } @else {
-              <app-status-chip label="Sin préstamos" type="sin-prestamos" />
-            }
-          </td>
-          <td class="px-4 py-4 text-[#94A3B8]">{{ getTotalLoans(client.loans) }}</td>
-          <td class="px-4 py-4">
-            <app-dropdown-menu
-              (onCreate)="createClient(client)"
-              (onEdit)="editClient(client)"
-              (onDelete)="deleteClient(client.id)"
-            />
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
+<div class="w-full overflow-x-auto rounded-lg">
+  <data-table
+    [columnDefs]="clientColumns"
+    [data]="filteredClients()"
+    (edit)="openEditClient($event)"
+    (delete)="deleteClient($event)">
+  </data-table>
 </div>
 
-<!-- <div class="mt-10">
-  <data-table
-    [displayedColumns]="clientsColumns"
-    [data]="clients"
-    (edit)="editClient($event)"
-    (delete)="deleteClient($event)"
-  ></data-table>
-</div> -->
-
-<app-modal [isOpen]="isCreateClientOpen" (close)="isCreateClientOpen = false">
+<app-modal [isOpen]="isClientModalOpen()" (close)="closeClientModal()">
   <div>
     <modal-layout
-      title="Registrar nuevo Cliente"
-      description="Añade un nuevo cliente al sistema"
-      buttonLabel="Crear cliente"
+      [title]="selectedClient() ? 'Editar Cliente' : 'Registrar nuevo Cliente'"
+      [description]="selectedClient() ? 'Modifica los datos del cliente' : 'Añade un nuevo cliente al sistema'"
+      [buttonLabel]="selectedClient() ? 'Guardar cambios' : 'Crear cliente'"
     >
       <app-client-form
-        (submitForm)="createClient($event)"
-        (cancel)="isCreateClientOpen = false"
+        [formType]="selectedClient() ? 'edit' : 'create'"
+        [clientData]="selectedClient()"
+        (submitForm)="saveClient($event)"
+        (cancel)="closeClientModal()"
       ></app-client-form>
     </modal-layout>
   </div>

@@ -2,14 +2,15 @@
   title="Juegos"
   description="Gestiona el catalogo de juegos de mesa"
   buttonLabel="Nuevo juego"
-  (buttonClick)="openModalGame()"
+  (buttonClick)="openCreateGameModal()"
 />
 
 <div class="flex flex-row justify-between items-center mb-4">
   <btn-secondary
-  [tabs]="categories"
-  [selected]="selectedCategory"
-  (tabChange)="filterByCategory($event)" />
+    [tabs]="categories"
+    [selected]="selectedCategory"
+    (tabChange)="filterByCategory($event)"
+  />
 
   <search-input placeholder="Buscar por nombre... " (searchChange)="onSearch($event)" />
 </div>
@@ -19,15 +20,18 @@
     <div class="bg-[#1E293B] rounded-xl overflow-hidden border border-[#334155]">
       <!-- imagen placeholder -->
       <div class="relative h-48 bg-[#0F172A] flex items-center justify-center">
-        <img src="{{ game.image}}" alt="" class="text-[#334155] text-4xlclass w-full h-full object-cover" />
-        <div class="justify-between">
-          <span
-            class="absolute top-2 left-2 text-xs bg-[#1E293B] text-[#94A3B8] px-2 py-1 rounded-full"
-          >
-            {{ game.category.name }}
-          </span>
-          <img src="more_vert.png" alt="" class="absolute top-2 px-2 py-1 rounded-full" />
-
+        <img
+          src="{{ game.image }}"
+          alt=""
+          class="text-[#334155] text-4xlclass w-full h-full object-cover"
+        />
+        <span
+          class="absolute top-2 left-2 text-xs bg-[#1E293B] text-[#94A3B8] px-2 py-1 rounded-full"
+        >
+          {{ game.category?.name }}
+        </span>
+        <div class="absolute top-1 right-1 bg-amber-50">
+          <app-dropdown-menu (onEdit)="editGame(game)" (onDelete)="deleteGame(game.id)" />
         </div>
       </div>
 
@@ -64,15 +68,21 @@
   }
 </div>
 
-<app-modal [isOpen]="isCreateGameOpen" (close)="isCreateGameOpen = false">
-  <modal-layout
-    title="Registrar Juegos"
-    description="Añade un nuevo juego al sistema"
-    buttonLabel="Crear Juego"
-  >
-    <app-game-form
-      (submitForm)="createGame($event)"
-      (cancel)="isCreateGameOpen = false"
-    ></app-game-form>
-  </modal-layout>
+<app-modal [isOpen]="isGameModalOpen" (close)="closeGameModal()">
+  <div>
+    <modal-layout
+      [title]="selectedGame ? 'Editar Juego' : 'Registrar Juegos'"
+      [description]="
+        selectedGame ? 'Modifica los datos del juego' : 'Añade un nuevo juego al sistema'
+      "
+      [buttonLabel]="selectedGame ? 'Guardar cambios' : 'Crear Juego'"
+    >
+      <app-game-form
+        [formType]="selectedGame ? 'edit' : 'create'"
+        [gameData]="selectedGame"
+        (submitForm)="saveGame($event)"
+        (cancel)="closeGameModal()"
+      ></app-game-form>
+    </modal-layout>
+  </div>
 </app-modal>

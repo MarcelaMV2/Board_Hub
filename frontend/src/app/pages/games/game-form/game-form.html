@@ -1,5 +1,4 @@
 <div class="flex flex-col items-center gap-6 p-8 rounded-xl w-full max-w-lg mx-auto">
-  <!-- SUBIR IMAGEN -->
   <div class="flex flex-col gap-2 w-full">
     <label class="text-xs text-gray-400 uppercase tracking-widest">Subir imagen</label>
     <label
@@ -28,7 +27,6 @@
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-2 w-full">
-    <!-- NOMBRE + CATEGORIA -->
     <div class="grid grid-cols-2 gap-4">
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400 uppercase tracking-widest">Nombre</label>
@@ -50,7 +48,6 @@
       </div>
     </div>
 
-    <!-- DESCRIPCION -->
     <div class="flex flex-col gap-1">
       <label class="text-xs text-gray-400 uppercase tracking-widest">Descripcion</label>
       <mat-form-field appearance="outline" class="w-full">
@@ -63,7 +60,6 @@
       </mat-form-field>
     </div>
 
-    <!-- JUGADORES MIN + MAX + DURACION -->
     <div class="grid grid-cols-3 gap-4">
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400 uppercase tracking-widest">Jugadores minimo</label>
@@ -85,7 +81,6 @@
       </div>
     </div>
 
-    <!-- STOCK + PRECIO + ESTADO -->
     <div class="grid grid-cols-3 gap-4">
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400 uppercase tracking-widest">Stock</label>
@@ -112,7 +107,6 @@
       </div>
     </div>
 
-    <!-- BOTONES -->
     <div class="flex justify-center gap-4 mt-2">
       <button
         type="button"
@@ -125,7 +119,7 @@
         type="submit"
         class="px-8 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition"
       >
-        Crear Juego
+        {{ formType === 'edit' ? 'Guardar cambios' : 'Crear Juego' }}
       </button>
     </div>
   </form>
